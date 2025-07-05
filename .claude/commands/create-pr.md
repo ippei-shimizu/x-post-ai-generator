@@ -1,10 +1,11 @@
 # プルリクエスト作成コマンド
 
-現在のfeatureブランチでの作業を完了し、包括的な品質チェック・セキュリティ検証・ドキュメント更新を含む高品質なプルリクエストを作成してください。
+現在の feature ブランチでの作業を完了し、包括的な品質チェック・セキュリティ検証・ドキュメント更新を含む高品質なプルリクエストを作成してください。
 
 ## 実行手順：
 
 ### 1. **前提条件・環境確認**
+
 ```bash
 echo "🔍 Pre-PR validation starting..."
 
@@ -29,6 +30,7 @@ echo "✅ Issue: #$ISSUE_NUMBER"
 ### 2. **包括的品質チェック**
 
 #### 2.1 **コード品質・構文チェック**
+
 ```bash
 echo "🔧 Running code quality checks..."
 
@@ -61,6 +63,7 @@ pnpm run format:check || {
 ```
 
 #### 2.2 **テスト実行・カバレッジ確認**
+
 ```bash
 echo "🧪 Running comprehensive test suite..."
 
@@ -95,6 +98,7 @@ COVERAGE_THRESHOLD=80
 ```
 
 #### 2.3 **セキュリティ・プライバシーチェック**
+
 ```bash
 echo "🛡️ Security and privacy validation..."
 
@@ -124,6 +128,7 @@ fi
 ```
 
 #### 2.4 **プロジェクト固有要件チェック**
+
 ```bash
 echo "🎯 X-Post-AI-Generator specific checks..."
 
@@ -145,6 +150,7 @@ echo "⚡ Performance requirements..."
 ```
 
 ### 3. **ビルド・デプロイ準備確認**
+
 ```bash
 echo "🏗️ Build and deployment validation..."
 
@@ -170,6 +176,7 @@ echo "🗄️ Database migration validation..."
 ```
 
 ### 4. **変更内容分析・影響範囲評価**
+
 ```bash
 echo "📊 Analyzing changes and impact..."
 
@@ -192,6 +199,7 @@ echo "🔗 Dependency impact:"
 ```
 
 ### 5. **ドキュメント更新確認**
+
 ```bash
 echo "📚 Documentation validation..."
 
@@ -213,6 +221,7 @@ echo "💬 Code documentation..."
 ```
 
 ### 6. **最終コミット・プッシュ準備**
+
 ```bash
 echo "📝 Final commit preparation..."
 
@@ -223,7 +232,7 @@ git status
 if [ -n "$(git status --porcelain)" ]; then
   echo "📋 Creating final commit..."
   git add .
-  
+
   # コミットメッセージ生成
   COMMIT_TYPE="feat"
   if [[ "$CHANGED_FILES" =~ test ]]; then
@@ -231,7 +240,7 @@ if [ -n "$(git status --porcelain)" ]; then
   elif [[ "$CHANGED_FILES" =~ doc ]]; then
     COMMIT_TYPE="docs"
   fi
-  
+
   git commit -m "$COMMIT_TYPE(#$ISSUE_NUMBER): finalize implementation
 
 - Complete all quality checks and tests
@@ -247,9 +256,10 @@ echo "📤 Pushing branch..."
 git push origin HEAD
 ```
 
-### 7. **PR内容自動生成**
+### 7. **PR 内容自動生成**
 
-#### 7.1 **Issue情報取得・分析**
+#### 7.1 **Issue 情報取得・分析**
+
 ```bash
 echo "📋 Generating PR content..."
 
@@ -261,6 +271,7 @@ ISSUE_LABELS=$(gh issue view $ISSUE_NUMBER --json labels -q '.labels[].name' | t
 ```
 
 #### 7.2 **変更サマリー生成**
+
 ```bash
 # Git統計情報
 COMMITS_COUNT=$(git rev-list --count main..HEAD)
@@ -276,6 +287,7 @@ TEST_CHANGES=$(echo "$CHANGED_FILES" | grep -c 'test\|spec' || echo "0")
 ```
 
 #### 7.3 **品質メトリクス取得**
+
 ```bash
 # テストカバレッジ
 COVERAGE_REPORT=""
@@ -293,6 +305,7 @@ PERFORMANCE_STATUS="✅ Performance requirements verified"
 ```
 
 ### 8. **PR Body 自動生成**
+
 ```bash
 cat > pr_body.md << EOF
 ## 📋 概要
@@ -306,13 +319,13 @@ $(echo "$ISSUE_BODY" | head -3)
 
 ### 主な変更
 - 📁 **ファイル変更**: $FILES_CHANGED files
-- ➕ **追加行数**: $LINES_ADDED lines  
+- ➕ **追加行数**: $LINES_ADDED lines
 - ➖ **削除行数**: $LINES_DELETED lines
 - 📝 **コミット数**: $COMMITS_COUNT commits
 
 ### 技術領域別変更
 - 🌐 **Frontend**: $FRONTEND_CHANGES files changed
-- ⚡ **Backend**: $BACKEND_CHANGES files changed  
+- ⚡ **Backend**: $BACKEND_CHANGES files changed
 - 🗄️ **Database**: $DB_CHANGES files changed
 - 🧪 **Tests**: $TEST_CHANGES files changed
 
@@ -323,7 +336,7 @@ $(git log --oneline main..HEAD | sed 's/^/- /')
 
 ### テスト実行結果
 - ✅ **単体テスト**: 全テスト通過
-- ✅ **統合テスト**: 全テスト通過  
+- ✅ **統合テスト**: 全テスト通過
 - ✅ **E2Eテスト**: 重要フロー確認済み
 - $COVERAGE_REPORT
 
@@ -389,6 +402,7 @@ EOF
 ```
 
 ### 9. **プルリクエスト作成**
+
 ```bash
 echo "🚀 Creating pull request..."
 
@@ -412,6 +426,7 @@ fi
 ```
 
 ### 10. **後処理・通知**
+
 ```bash
 echo "📊 PR Summary:"
 echo "=================="
@@ -432,32 +447,35 @@ echo "🎉 PR creation completed successfully!"
 echo "👀 Please request reviews and monitor CI/CD pipeline"
 echo "📋 Next steps:"
 echo "   1. Monitor automated tests"
-echo "   2. Address reviewer feedback"  
+echo "   2. Address reviewer feedback"
 echo "   3. Verify deployment readiness"
 echo "   4. Merge after approval"
 ```
 
 ## 品質ゲート要件
 
-PR作成前に以下の要件をすべて満たす必要があります：
+PR 作成前に以下の要件をすべて満たす必要があります：
 
 ### 必須要件
-- [ ] **全テスト通過**: 単体・統合・E2Eテスト
-- [ ] **型チェック通過**: TypeScript型エラーなし
-- [ ] **リンター通過**: ESLint・Prettier適用済み
+
+- [ ] **全テスト通過**: 単体・統合・E2E テスト
+- [ ] **型チェック通過**: TypeScript 型エラーなし
+- [ ] **リンター通過**: ESLint・Prettier 適用済み
 - [ ] **ビルド成功**: フロントエンド・バックエンド両方
 - [ ] **セキュリティチェック**: RLS・JWT・データ保護確認
 
 ### 品質要件
+
 - [ ] **テストカバレッジ**: 80%以上維持
 - [ ] **ドキュメント**: 実装内容の適切な文書化
 - [ ] **エラーハンドリング**: 例外ケースの適切な処理
 - [ ] **パフォーマンス**: 要件内でのレスポンス時間
 
 ### プロジェクト固有要件
-- [ ] **ユーザー分離**: RLS適用とデータ漏洩防止
-- [ ] **プライバシー保護**: GDPR準拠とデータ保持期間
-- [ ] **AI統合品質**: プロンプト品質とコスト効率
-- [ ] **設計書整合性**: CLAUDE.mdとの一貫性
+
+- [ ] **ユーザー分離**: RLS 適用とデータ漏洩防止
+- [ ] **プライバシー保護**: GDPR 準拠とデータ保持期間
+- [ ] **AI 統合品質**: プロンプト品質とコスト効率
+- [ ] **設計書整合性**: CLAUDE.md との一貫性
 
 すべての要件を満たした場合のみ、高品質なプルリクエストが作成されます。
