@@ -1,11 +1,10 @@
-# プルリクエスト作成コマンド
+# プルリクエスト作成・更新コマンド
 
-現在の feature ブランチでの作業を完了し、包括的な品質チェック・セキュリティ検証・ドキュメント更新を含む高品質なプルリクエストを作成してください。
+現在のfeatureブランチでの作業を完了し、**既存PR更新または新規PR作成**を自動判定して実行します。
 
 ## 実行手順：
 
 ### 1. **前提条件・環境確認**
-
 ```bash
 echo "🔍 Pre-PR validation starting..."
 
@@ -27,10 +26,46 @@ echo "✅ Branch: $CURRENT_BRANCH"
 echo "✅ Issue: #$ISSUE_NUMBER"
 ```
 
+### 1.5 **既存PR存在チェック・判定**
+```bash
+echo "🔍 Checking for existing PR..."
+
+# 現在のブランチに対応するPRを検索
+EXISTING_PR=$(gh pr list --head "$CURRENT_BRANCH" --json number,url,title,state --jq '.[0]')
+
+if [ "$EXISTING_PR" != "null" ] && [ -n "$EXISTING_PR" ]; then
+  # 既存PR情報取得
+  PR_NUMBER=$(echo "$EXISTING_PR" | jq -r '.number')
+  PR_URL=$(echo "$EXISTING_PR" | jq -r '.url')
+  PR_TITLE=$(echo "$EXISTING_PR" | jq -r '.title')
+  PR_STATE=$(echo "$EXISTING_PR" | jq -r '.state')
+  
+  echo "📋 Existing PR found:"
+  echo "   Number: #$PR_NUMBER"
+  echo "   Title: $PR_TITLE"
+  echo "   State: $PR_STATE"
+  echo "   URL: $PR_URL"
+  
+  # PRの状態確認
+  if [ "$PR_STATE" = "MERGED" ]; then
+    echo "❌ PR #$PR_NUMBER is already merged. Cannot update."
+    exit 1
+  elif [ "$PR_STATE" = "CLOSED" ]; then
+    echo "⚠️ PR #$PR_NUMBER is closed. Creating new PR instead."
+    EXISTING_PR=""
+  else
+    echo "🔄 Will update existing PR #$PR_NUMBER"
+    UPDATE_MODE=true
+  fi
+else
+  echo "📝 No existing PR found. Will create new PR."
+  UPDATE_MODE=false
+fi
+```
+
 ### 2. **包括的品質チェック**
 
 #### 2.1 **コード品質・構文チェック**
-
 ```bash
 echo "🔧 Running code quality checks..."
 
@@ -63,7 +98,6 @@ pnpm run format:check || {
 ```
 
 #### 2.2 **テスト実行・カバレッジ確認**
-
 ```bash
 echo "🧪 Running comprehensive test suite..."
 
@@ -98,7 +132,6 @@ COVERAGE_THRESHOLD=80
 ```
 
 #### 2.3 **セキュリティ・プライバシーチェック**
-
 ```bash
 echo "🛡️ Security and privacy validation..."
 
@@ -128,7 +161,6 @@ fi
 ```
 
 #### 2.4 **プロジェクト固有要件チェック**
-
 ```bash
 echo "🎯 X-Post-AI-Generator specific checks..."
 
@@ -150,7 +182,6 @@ echo "⚡ Performance requirements..."
 ```
 
 ### 3. **ビルド・デプロイ準備確認**
-
 ```bash
 echo "🏗️ Build and deployment validation..."
 
@@ -176,7 +207,6 @@ echo "🗄️ Database migration validation..."
 ```
 
 ### 4. **変更内容分析・影響範囲評価**
-
 ```bash
 echo "📊 Analyzing changes and impact..."
 
@@ -199,7 +229,6 @@ echo "🔗 Dependency impact:"
 ```
 
 ### 5. **ドキュメント更新確認**
-
 ```bash
 echo "📚 Documentation validation..."
 
@@ -221,7 +250,6 @@ echo "💬 Code documentation..."
 ```
 
 ### 6. **最終コミット・プッシュ準備**
-
 ```bash
 echo "📝 Final commit preparation..."
 
@@ -232,7 +260,7 @@ git status
 if [ -n "$(git status --porcelain)" ]; then
   echo "📋 Creating final commit..."
   git add .
-
+  
   # コミットメッセージ生成
   COMMIT_TYPE="feat"
   if [[ "$CHANGED_FILES" =~ test ]]; then
@@ -240,7 +268,7 @@ if [ -n "$(git status --porcelain)" ]; then
   elif [[ "$CHANGED_FILES" =~ doc ]]; then
     COMMIT_TYPE="docs"
   fi
-
+  
   git commit -m "$COMMIT_TYPE(#$ISSUE_NUMBER): finalize implementation
 
 - Complete all quality checks and tests
@@ -256,10 +284,9 @@ echo "📤 Pushing branch..."
 git push origin HEAD
 ```
 
-### 7. **PR 内容自動生成**
+### 7. **PR内容自動生成（更新対応）**
 
-#### 7.1 **Issue 情報取得・分析**
-
+#### 7.1 **Issue情報取得・分析**
 ```bash
 echo "📋 Generating PR content..."
 
@@ -271,7 +298,6 @@ ISSUE_LABELS=$(gh issue view $ISSUE_NUMBER --json labels -q '.labels[].name' | t
 ```
 
 #### 7.2 **変更サマリー生成**
-
 ```bash
 # Git統計情報
 COMMITS_COUNT=$(git rev-list --count main..HEAD)
@@ -287,7 +313,6 @@ TEST_CHANGES=$(echo "$CHANGED_FILES" | grep -c 'test\|spec' || echo "0")
 ```
 
 #### 7.3 **品質メトリクス取得**
-
 ```bash
 # テストカバレッジ
 COVERAGE_REPORT=""
@@ -302,10 +327,23 @@ SECURITY_STATUS="✅ Security checks passed"
 
 # パフォーマンス確認
 PERFORMANCE_STATUS="✅ Performance requirements verified"
+
+# 更新情報追加（UPDATE_MODE=trueの場合）
+if [ "$UPDATE_MODE" = true ]; then
+  LAST_UPDATE=$(date '+%Y-%m-%d %H:%M:%S')
+  UPDATE_INFO="
+
+## 🔄 更新履歴
+
+**最終更新**: $LAST_UPDATE
+**更新回数**: $(gh pr view $PR_NUMBER --json comments --jq '.comments | length')回目
+**前回からの変更**: $(git rev-list --count HEAD~1..HEAD)commits"
+else
+  UPDATE_INFO=""
+fi
 ```
 
-### 8. **PR Body 自動生成**
-
+### 8. **PR Body生成（更新情報含む）**
 ```bash
 cat > pr_body.md << EOF
 ## 📋 概要
@@ -319,13 +357,13 @@ $(echo "$ISSUE_BODY" | head -3)
 
 ### 主な変更
 - 📁 **ファイル変更**: $FILES_CHANGED files
-- ➕ **追加行数**: $LINES_ADDED lines
+- ➕ **追加行数**: $LINES_ADDED lines  
 - ➖ **削除行数**: $LINES_DELETED lines
 - 📝 **コミット数**: $COMMITS_COUNT commits
 
 ### 技術領域別変更
 - 🌐 **Frontend**: $FRONTEND_CHANGES files changed
-- ⚡ **Backend**: $BACKEND_CHANGES files changed
+- ⚡ **Backend**: $BACKEND_CHANGES files changed  
 - 🗄️ **Database**: $DB_CHANGES files changed
 - 🧪 **Tests**: $TEST_CHANGES files changed
 
@@ -336,7 +374,7 @@ $(git log --oneline main..HEAD | sed 's/^/- /')
 
 ### テスト実行結果
 - ✅ **単体テスト**: 全テスト通過
-- ✅ **統合テスト**: 全テスト通過
+- ✅ **統合テスト**: 全テスト通過  
 - ✅ **E2Eテスト**: 重要フロー確認済み
 - $COVERAGE_REPORT
 
@@ -392,6 +430,8 @@ $(git log --oneline main..HEAD | sed 's/^/- /')
 - 環境変数設定確認
 - 外部サービス設定変更
 
+$UPDATE_INFO
+
 ---
 
 **Closes #$ISSUE_NUMBER**
@@ -401,81 +441,131 @@ $(git log --oneline main..HEAD | sed 's/^/- /')
 EOF
 ```
 
-### 9. **プルリクエスト作成**
-
+### 9. **PR作成・更新実行**
 ```bash
-echo "🚀 Creating pull request..."
+if [ "$UPDATE_MODE" = true ]; then
+  echo "🔄 Updating existing PR #$PR_NUMBER..."
+  
+  # 既存PR更新
+  gh pr edit $PR_NUMBER \
+    --title "feat(#$ISSUE_NUMBER): $ISSUE_TITLE" \
+    --body-file pr_body.md \
+    --add-label "updated,ready-for-review"
+  
+  # 更新通知コメント追加
+  gh pr comment $PR_NUMBER --body "🔄 **PR Updated** - $(date '+%Y-%m-%d %H:%M:%S')
 
-# PR作成
-PR_URL=$(gh pr create \
-  --title "feat(#$ISSUE_NUMBER): $ISSUE_TITLE" \
-  --body-file pr_body.md \
-  --base main \
-  --head "$CURRENT_BRANCH" \
-  --label "enhancement,ready-for-review" \
-  --assignee "@me" \
-  --reviewer "$(git log --format='%ae' main..HEAD | sort | uniq | head -1)" 2>/dev/null || echo "")
+**変更サマリー**:
+- 📁 Files: $FILES_CHANGED changed
+- 📈 Lines: +$LINES_ADDED -$LINES_DELETED  
+- 📝 Commits: $COMMITS_COUNT total
 
-if [ -n "$PR_URL" ]; then
-  echo "✅ Pull Request created successfully!"
+**品質チェック**: ✅ All checks passed
+**テスト状況**: ✅ All tests passing
+**レビュー準備**: ✅ Ready for review
+
+詳細は PR description をご確認ください。"
+
+  PR_URL=$(gh pr view $PR_NUMBER --json url -q '.url')
+  echo "✅ Pull Request #$PR_NUMBER updated successfully!"
   echo "🔗 URL: $PR_URL"
+  
 else
-  echo "❌ Failed to create Pull Request"
-  exit 1
+  echo "🚀 Creating new pull request..."
+  
+  # 新規PR作成
+  PR_URL=$(gh pr create \
+    --title "feat(#$ISSUE_NUMBER): $ISSUE_TITLE" \
+    --body-file pr_body.md \
+    --base main \
+    --head "$CURRENT_BRANCH" \
+    --label "enhancement,ready-for-review" \
+    --assignee "@me" \
+    --reviewer "$(git log --format='%ae' main..HEAD | sort | uniq | head -1)" 2>/dev/null || echo "")
+
+  if [ -n "$PR_URL" ]; then
+    echo "✅ Pull Request created successfully!"
+    echo "🔗 URL: $PR_URL"
+  else
+    echo "❌ Failed to create Pull Request"
+    exit 1
+  fi
 fi
 ```
 
-### 10. **後処理・通知**
-
+### 10. **後処理・通知（更新対応）**
 ```bash
-echo "📊 PR Summary:"
-echo "=================="
-echo "🎯 Issue: #$ISSUE_NUMBER"
-echo "🌿 Branch: $CURRENT_BRANCH"
-echo "📁 Files: $FILES_CHANGED changed"
-echo "📈 Lines: +$LINES_ADDED -$LINES_DELETED"
-echo "🧪 Tests: ✅ All passed"
-echo "🔒 Security: ✅ Validated"
-echo "📖 Docs: ✅ Updated"
-echo "🔗 PR URL: $PR_URL"
-echo "=================="
+if [ "$UPDATE_MODE" = true ]; then
+  echo "📊 PR Update Summary:"
+  echo "=================="
+  echo "🔄 Action: PR Updated"
+  echo "📋 PR Number: #$PR_NUMBER"
+  echo "🎯 Issue: #$ISSUE_NUMBER"
+  echo "🌿 Branch: $CURRENT_BRANCH"
+  echo "📁 Files: $FILES_CHANGED changed"
+  echo "📈 Lines: +$LINES_ADDED -$LINES_DELETED"
+  echo "🧪 Tests: ✅ All passed"
+  echo "🔒 Security: ✅ Validated"
+  echo "📖 Docs: ✅ Updated"
+  echo "🔗 PR URL: $PR_URL"
+  echo "=================="
+  
+  echo "🎉 PR update completed successfully!"
+  echo "👀 Reviewers have been notified of the update"
+  echo "📋 Next steps:"
+  echo "   1. Monitor automated tests"
+  echo "   2. Address any new reviewer feedback"
+  echo "   3. Verify CI/CD pipeline status"
+  echo "   4. Ready for re-review"
+  
+else
+  echo "📊 PR Creation Summary:"
+  echo "=================="
+  echo "🆕 Action: New PR Created"  
+  echo "🎯 Issue: #$ISSUE_NUMBER"
+  echo "🌿 Branch: $CURRENT_BRANCH"
+  echo "📁 Files: $FILES_CHANGED changed"
+  echo "📈 Lines: +$LINES_ADDED -$LINES_DELETED"
+  echo "🧪 Tests: ✅ All passed"
+  echo "🔒 Security: ✅ Validated"
+  echo "📖 Docs: ✅ Updated"
+  echo "🔗 PR URL: $PR_URL"
+  echo "=================="
+  
+  echo "🎉 PR creation completed successfully!"
+  echo "👀 Please request reviews and monitor CI/CD pipeline"
+  echo "📋 Next steps:"
+  echo "   1. Monitor automated tests"
+  echo "   2. Address reviewer feedback"  
+  echo "   3. Verify deployment readiness"
+  echo "   4. Merge after approval"
+fi
 
 # クリーンアップ
 rm -f pr_body.md /tmp/issue_$ISSUE_NUMBER.json
-
-echo "🎉 PR creation completed successfully!"
-echo "👀 Please request reviews and monitor CI/CD pipeline"
-echo "📋 Next steps:"
-echo "   1. Monitor automated tests"
-echo "   2. Address reviewer feedback"
-echo "   3. Verify deployment readiness"
-echo "   4. Merge after approval"
 ```
 
 ## 品質ゲート要件
 
-PR 作成前に以下の要件をすべて満たす必要があります：
+PR作成前に以下の要件をすべて満たす必要があります：
 
 ### 必須要件
-
-- [ ] **全テスト通過**: 単体・統合・E2E テスト
-- [ ] **型チェック通過**: TypeScript 型エラーなし
-- [ ] **リンター通過**: ESLint・Prettier 適用済み
+- [ ] **全テスト通過**: 単体・統合・E2Eテスト
+- [ ] **型チェック通過**: TypeScript型エラーなし
+- [ ] **リンター通過**: ESLint・Prettier適用済み
 - [ ] **ビルド成功**: フロントエンド・バックエンド両方
 - [ ] **セキュリティチェック**: RLS・JWT・データ保護確認
 
 ### 品質要件
-
 - [ ] **テストカバレッジ**: 80%以上維持
 - [ ] **ドキュメント**: 実装内容の適切な文書化
 - [ ] **エラーハンドリング**: 例外ケースの適切な処理
 - [ ] **パフォーマンス**: 要件内でのレスポンス時間
 
 ### プロジェクト固有要件
-
-- [ ] **ユーザー分離**: RLS 適用とデータ漏洩防止
-- [ ] **プライバシー保護**: GDPR 準拠とデータ保持期間
-- [ ] **AI 統合品質**: プロンプト品質とコスト効率
-- [ ] **設計書整合性**: CLAUDE.md との一貫性
+- [ ] **ユーザー分離**: RLS適用とデータ漏洩防止
+- [ ] **プライバシー保護**: GDPR準拠とデータ保持期間
+- [ ] **AI統合品質**: プロンプト品質とコスト効率
+- [ ] **設計書整合性**: CLAUDE.mdとの一貫性
 
 すべての要件を満たした場合のみ、高品質なプルリクエストが作成されます。

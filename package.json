@@ -12,10 +12,6 @@
     "type-check": "pnpm --recursive run type-check",
     "format": "prettier --write ."
   },
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "devDependencies": {
     "@types/node": "^20",
     "prettier": "^3.6.2",
