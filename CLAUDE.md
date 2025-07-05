@@ -118,6 +118,17 @@ X-Post-AI-Generatorは、技術系エンジニア向けのX（Twitter）投稿�
 
 ### フロントエンド（Next.js）
 
+**コンポーネント設計**
+- コンポーネントのデザインパターンは、Container/Presentationalパターンを採用し、ロジックとUIを分離します。
+- 基本的には、Server Componentsを使用し、必要な場合にのみClient Componentsを使用します。
+- **useEffectは、副作用のある処理に限定し、可能な限りServer Componentsで完結させます。**
+  - データ取得はServer Componentsで行い、propsとして渡す
+  - 認証チェックもServer Componentsで実装
+  - タイマーやイベントリスナーなど真の副作用のみuseEffectを使用
+- UIコンポーネントはshadcn/uiをベースに、Tailwind CSSでスタイリングします。
+- コロケーションの考え方を採用し、コンポーネントごとにテストを配置します。
+- 状態管理はZustandを使用し、API呼び出しはTanStack Queryで行います。
+
 **単体テスト（Jest + React Testing Library）**
 
 ```tsx
@@ -439,6 +450,18 @@ x-post-ai-generator/
 ├── /frontend           # Next.js（Vercel）側
 │   ├── src/
 │   │   ├── app
+│   │           ├── _components/
+│   │                   ├── layouts/
+│   │                   │   ├── header.tsx
+│   │                   ├── ui/
+│   │                   │   ├── button.tsx
+│   │                   ├── features/（複数のコンポーネントで使用される機能別コンポーネントを格納）
+│   │           ├── Routing Files（各ページのルーティングに対応するディレクトリ）/
+│   │                   ├── index.tsx/
+│   │                   ├── hooks（コロケーション）/
+│   │                   ├── components（コロケーション）/
+│   │           │   ├── page.tsx
+│   │           │   ├── layout.tsx
 │   │   ├── constants
 │   │   ├── hooks
 │   │   ├── lib
@@ -1075,6 +1098,7 @@ WITH CHECK (user_id = auth.uid());
 - **NextAuth.js**: Google OAuth認証 + JWT管理
 - **Zustand**: 軽量状態管理
 - **TanStack Query**: サーバー状態管理
+- **pnpm**: パッケージマネージャー
 
 ### フロントエンドテスト
 
@@ -1807,3 +1831,18 @@ const logUserMetrics = async (userId: string, operation: string, duration: numbe
 5. パフォーマンス影響の確認
 6. ドキュメントとの整合性
 ```
+
+## ブランチ戦略
+
+- main: プロダクションブランチ（直接プッシュ禁止）
+- feature/[issue-number]-[feature-name]: 機能開発ブランチ
+
+## 開発ワークフロー
+
+- GitHub issueを作成してタスクを定義
+- issueからfeatureブランチを作成
+- 開発完了後、PRを作成
+- コミットメッセージは conventional commits 形式
+- PRには適切な説明とテストを含める
+- GitHub CLI (gh) を使用してissue/PR操作を実行
+- すべてのgit操作はこの規約に従って実行
