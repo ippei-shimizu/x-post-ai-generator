@@ -360,7 +360,7 @@ fi
 
 ```bash
 cat > pr_body.md << EOF
-closed #$PR_NUMBER
+closed #$ISSUE_NUMBER
 
 ## 📋 概要
 
