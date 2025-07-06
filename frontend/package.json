@@ -4,12 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:staging": "NODE_ENV=staging next dev --turbopack",
     "build": "next build",
+    "build:staging": "NODE_ENV=staging next build",
+    "build:production": "NODE_ENV=production next build",
     "start": "next start",
+    "start:staging": "NODE_ENV=staging next start",
+    "start:production": "NODE_ENV=production next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "env:dev": "cp .env.development .env.local",
+    "env:staging": "cp .env.staging .env.local", 
+    "env:prod": "cp .env.production .env.local"
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.10.0",
