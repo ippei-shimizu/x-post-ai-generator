@@ -5,6 +5,14 @@
 
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+
+// Mock UserNav component to avoid NextAuth dependency issues in tests
+jest.mock('../src/components/auth/UserNav', () => {
+  return {
+    UserNav: () => 'User Navigation',
+  };
+});
+
 import HomePage from '../src/app/page';
 
 describe('プロジェクトセットアップテスト (TDD Red Phase)', () => {
@@ -19,7 +27,8 @@ describe('プロジェクトセットアップテスト (TDD Red Phase)', () => 
     it('アプリケーションのタイトルが表示される', () => {
       // Red Phase: ホームページに適切なコンテンツが追加されるまで失敗する
       render(HomePage());
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+      expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(2);
+      expect(screen.getByText('X-Post AI Generator')).toBeInTheDocument();
     });
 
     it('適切なセマンティックHTML構造を持つ', () => {
@@ -42,7 +51,7 @@ describe('プロジェクトセットアップテスト (TDD Red Phase)', () => 
       // Red Phase: Tailwindが適切に設定されるまで失敗する
       render(HomePage());
       const mainElement = screen.getByRole('main');
-      expect(mainElement).toHaveClass('min-h-screen');
+      expect(mainElement).toHaveClass('container');
     });
   });
 

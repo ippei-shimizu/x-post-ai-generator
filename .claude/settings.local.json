@@ -1,4 +1,19 @@
 {
-  "enabledMcpjsonServers": ["supabase"],
-  "enableAllProjectMcpServers": true
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "Bash(pnpm run:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(npx supabase:*)",
+      "Bash(pkill:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(gh pr create:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["supabase"]
 }

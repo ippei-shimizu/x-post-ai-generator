@@ -145,10 +145,10 @@ export async function withUserContext<T>(
 /**
  * ユーザー固有データの安全な取得
  */
-export async function getUserData<T = any>(
+export async function getUserData<T = unknown>(
   tableName: string,
   userId: string,
-  filters: Record<string, any> = {}
+  filters: Record<string, unknown> = {}
 ): Promise<T[]> {
   return withUserContext(async (supabase, sessionUserId) => {
     // セッションユーザーと要求ユーザーの一致確認
@@ -179,7 +179,7 @@ export async function getUserData<T = any>(
 /**
  * ユーザー固有データの安全な作成
  */
-export async function createUserData<T = any>(
+export async function createUserData<T = unknown>(
   tableName: string,
   userId: string,
   data: Omit<T, 'user_id' | 'id' | 'created_at' | 'updated_at'>
@@ -210,7 +210,7 @@ export async function createUserData<T = any>(
 /**
  * ユーザー固有データの安全な更新
  */
-export async function updateUserData<T = any>(
+export async function updateUserData<T = unknown>(
   tableName: string,
   userId: string,
   id: string,
