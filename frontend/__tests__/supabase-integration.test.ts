@@ -11,11 +11,8 @@ describe('Supabase Integration Test (Real Connection)', () => {
 
   it('should access users table structure', async () => {
     // usersテーブルの存在確認（RLSのため空の結果でも接続確認になる）
-    const { error } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1);
-    
+    const { error } = await supabase.from('users').select('count').limit(1);
+
     // RLSによりアクセスが制限されるが、テーブル自体は存在する
     expect(error).toBeNull();
   });
@@ -26,15 +23,18 @@ describe('Supabase Integration Test (Real Connection)', () => {
       .from('personas')
       .select('*')
       .limit(1);
-    
+
     // RLSにより空の結果が返される（エラーではない）
     expect(error).toBeNull();
     expect(data).toEqual([]);
   });
 
   it('should have auth service available', async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
     // 未認証のため user は null
     expect(error).toBeNull();
     expect(user).toBeNull();
@@ -45,7 +45,7 @@ describe('Supabase Integration Test (Real Connection)', () => {
       .from('content_embeddings')
       .select('count')
       .limit(1);
-    
+
     // テーブルが存在し、アクセス可能（RLSにより空の結果）
     expect(error).toBeNull();
     expect(data).toEqual([]);

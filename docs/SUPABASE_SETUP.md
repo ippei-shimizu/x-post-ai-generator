@@ -98,45 +98,47 @@ pnpm dev
 `frontend/scripts/test-connection.js` を作成：
 
 ```javascript
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('環境変数が設定されていません')
-  process.exit(1)
+  console.error("環境変数が設定されていません");
+  process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function testConnection() {
   try {
     // データベース接続テスト
     const { data, error } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1)
-    
+      .from("users")
+      .select("count")
+      .limit(1);
+
     if (error) {
-      console.error('接続エラー:', error)
+      console.error("接続エラー:", error);
     } else {
-      console.log('✅ Supabase接続成功！')
+      console.log("✅ Supabase接続成功！");
     }
-    
+
     // 認証サービステスト
-    const { data: { user } } = await supabase.auth.getUser()
-    console.log('✅ 認証サービス利用可能')
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    console.log("✅ 認証サービス利用可能");
   } catch (err) {
-    console.error('エラー:', err)
+    console.error("エラー:", err);
   }
 }
 
-testConnection()
+testConnection();
 ```
 
 実行：
+
 ```bash
 node --env-file=.env.local scripts/test-connection.js
 ```
@@ -155,12 +157,15 @@ node --env-file=.env.local scripts/test-connection.js
 ## 🔧 トラブルシューティング
 
 ### "relation does not exist" エラー
+
 → マイグレーションが実行されていません。SQL Editorでマイグレーションファイルを実行してください。
 
 ### "permission denied" エラー
+
 → RLSが有効になっていますが、ポリシーが設定されていません。002_enable_rls_policies.sql を実行してください。
 
 ### "invalid API key" エラー
+
 → 環境変数の SUPABASE_ANON_KEY が正しくありません。Dashboard から正しい値をコピーしてください。
 
 ## 🔒 セキュリティ注意事項

@@ -9,11 +9,13 @@
 ### 1. 必要な値の取得
 
 #### Supabase Project Reference
+
 1. [Supabase Dashboard](https://supabase.com/dashboard) にアクセス
 2. プロジェクトを選択
 3. Settings → General → Reference ID をコピー
 
 #### Supabase Personal Access Token
+
 1. [Supabase Dashboard](https://supabase.com/dashboard) にアクセス
 2. 右上のプロフィールアイコン → Account Settings
 3. Access Tokens タブ → Generate new token
@@ -29,6 +31,7 @@ cp .mcp.json.example .mcp.json
 ```
 
 `.mcp.json` ファイル内の値を更新：
+
 - `<your-supabase-project-ref>` → 実際のプロジェクトリファレンス
 - `<your-supabase-personal-access-token>` → 実際のパーソナルアクセストークン
 

@@ -18,18 +18,21 @@ frontend/
 ## 🔧 環境別設定
 
 ### 開発環境 (Development)
+
 - **ファイル**: `.env.development`
 - **Supabase**: ローカルSupabase (http://127.0.0.1:54321)
 - **用途**: ローカル開発、単体テスト
 - **デバッグ**: 有効
 
 ### ステージング環境 (Staging)
+
 - **ファイル**: `.env.staging`
 - **Supabase**: Supabase本番プロジェクトの別インスタンス
 - **用途**: 統合テスト、デプロイ前確認
 - **デバッグ**: 有効（info レベル）
 
 ### 本番環境 (Production)
+
 - **ファイル**: `.env.production`
 - **Supabase**: Supabase本番プロジェクト
 - **用途**: 本番運用
@@ -78,23 +81,23 @@ pnpm run build:production
 
 ### 共通設定
 
-| 変数名 | 説明 | 例 |
-|--------|------|-----|
-| `NODE_ENV` | 実行環境 | `development`, `staging`, `production` |
-| `NEXT_PUBLIC_SUPABASE_URL` | SupabaseプロジェクトURL | `https://xxx.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase匿名キー | `eyJhbGciOiJIUzI1NiIs...` |
-| `NEXT_PUBLIC_APP_URL` | アプリケーションURL | `https://your-domain.com` |
-| `NEXTAUTH_URL` | NextAuth認証URL | `https://your-domain.com` |
-| `NEXTAUTH_SECRET` | NextAuth秘密鍵 | `32文字以上のランダム文字列` |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth クライアントID | `xxx.googleusercontent.com` |
+| 変数名                          | 説明                        | 例                                     |
+| ------------------------------- | --------------------------- | -------------------------------------- |
+| `NODE_ENV`                      | 実行環境                    | `development`, `staging`, `production` |
+| `NEXT_PUBLIC_SUPABASE_URL`      | SupabaseプロジェクトURL     | `https://xxx.supabase.co`              |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase匿名キー            | `eyJhbGciOiJIUzI1NiIs...`              |
+| `NEXT_PUBLIC_APP_URL`           | アプリケーションURL         | `https://your-domain.com`              |
+| `NEXTAUTH_URL`                  | NextAuth認証URL             | `https://your-domain.com`              |
+| `NEXTAUTH_SECRET`               | NextAuth秘密鍵              | `32文字以上のランダム文字列`           |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID`  | Google OAuth クライアントID | `xxx.googleusercontent.com`            |
 
 ### 開発/デバッグ設定
 
-| 変数名 | 説明 | 開発 | ステージング | 本番 |
-|--------|------|------|-------------|------|
-| `NEXT_PUBLIC_DEBUG` | デバッグモード | `true` | `true` | `false` |
-| `NEXT_PUBLIC_LOG_LEVEL` | ログレベル | `debug` | `info` | `error` |
-| `NEXT_PUBLIC_ENVIRONMENT` | 環境識別子 | `development` | `staging` | `production` |
+| 変数名                    | 説明           | 開発          | ステージング | 本番         |
+| ------------------------- | -------------- | ------------- | ------------ | ------------ |
+| `NEXT_PUBLIC_DEBUG`       | デバッグモード | `true`        | `true`       | `false`      |
+| `NEXT_PUBLIC_LOG_LEVEL`   | ログレベル     | `debug`       | `info`       | `error`      |
+| `NEXT_PUBLIC_ENVIRONMENT` | 環境識別子     | `development` | `staging`    | `production` |
 
 ## 🔒 セキュリティ設定
 
@@ -156,28 +159,31 @@ pnpm run build:production
 ### よくある問題
 
 1. **環境変数が読み込まれない**
+
    ```bash
    # .env.local が存在することを確認
    ls -la frontend/.env.local
-   
+
    # 開発環境設定をコピー
    pnpm run env:dev
    ```
 
 2. **Supabase接続エラー**
+
    ```bash
    # 環境変数の値を確認
    cat frontend/.env.local | grep SUPABASE
-   
+
    # ローカルSupabaseが起動しているか確認
    npx supabase status
    ```
 
 3. **環境の混在**
+
    ```bash
    # 現在の環境を確認
    echo $NODE_ENV
-   
+
    # .env.local を削除して再設定
    rm frontend/.env.local
    pnpm run env:dev

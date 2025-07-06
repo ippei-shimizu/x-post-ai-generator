@@ -1,12 +1,12 @@
-import { createClient } from '@supabase/supabase-js'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
-import type { Database } from '@/types/supabase'
+import { createClient } from '@supabase/supabase-js';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import type { Database } from '@/types/supabase';
 
 // NextAuth session と Supabase RLS の統合
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 /**
  * NextAuth.js セッションからユーザーIDを取得してSupabase RLSを設定
@@ -14,10 +14,10 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
  */
 export async function createAuthenticatedSupabaseClient() {
   // NextAuth セッション取得
-  const session = await getServerSession(authOptions)
-  
+  const session = await getServerSession(authOptions);
+
   if (!session?.user?.id) {
-    throw new Error('Unauthorized: No valid session found')
+    throw new Error('Unauthorized: No valid session found');
   }
 
   // Service Role でSupabaseクライアント作成
@@ -26,17 +26,17 @@ export async function createAuthenticatedSupabaseClient() {
       autoRefreshToken: false,
       persistSession: false,
     },
-  })
+  });
 
   // RLS用にユーザーコンテキストを設定
   // auth.uid() 関数でアクセス可能になる
   const { error } = await supabase.rpc('set_user_context', {
     user_id: session.user.id,
-  })
+  });
 
   if (error) {
-    console.error('Failed to set user context for RLS:', error)
-    throw new Error('Failed to authenticate with database')
+    console.error('Failed to set user context for RLS:', error);
+    throw new Error('Failed to authenticate with database');
   }
 
   return {
@@ -44,7 +44,7 @@ export async function createAuthenticatedSupabaseClient() {
     userId: session.user.id,
     userEmail: session.user.email,
     session,
-  }
+  };
 }
 
 /**
@@ -57,7 +57,7 @@ export function createClientSupabaseWithAuth(accessToken?: string) {
     return createClient<Database>(
       supabaseUrl,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    );
   }
 
   // NextAuth.js JWT をSupabaseに渡す
@@ -74,7 +74,7 @@ export function createClientSupabaseWithAuth(accessToken?: string) {
         persistSession: false,
       },
     }
-  )
+  );
 }
 
 /**
@@ -86,8 +86,10 @@ export async function validateUserAccess(
   operation: string = 'access'
 ): Promise<void> {
   if (userId !== resourceUserId) {
-    console.warn(`Access denied: User ${userId} attempted ${operation} on resource owned by ${resourceUserId}`)
-    throw new Error(`Access denied: You can only ${operation} your own data`)
+    console.warn(
+      `Access denied: User ${userId} attempted ${operation} on resource owned by ${resourceUserId}`
+    );
+    throw new Error(`Access denied: You can only ${operation} your own data`);
   }
 }
 
@@ -101,8 +103,8 @@ export class AuthRLSError extends Error {
     public operation?: string,
     public cause?: Error
   ) {
-    super(message)
-    this.name = 'AuthRLSError'
+    super(message);
+    this.name = 'AuthRLSError';
   }
 }
 
@@ -111,19 +113,22 @@ export class AuthRLSError extends Error {
  * データベース関数として実装される
  */
 export interface UserContext {
-  user_id: string
+  user_id: string;
 }
 
 /**
  * 型安全なユーザーデータアクセス
  */
 export async function withUserContext<T>(
-  operation: (client: ReturnType<typeof createClient<Database>>, userId: string) => Promise<T>
+  operation: (
+    client: ReturnType<typeof createClient<Database>>,
+    userId: string
+  ) => Promise<T>
 ): Promise<T> {
-  const { supabase, userId } = await createAuthenticatedSupabaseClient()
-  
+  const { supabase, userId } = await createAuthenticatedSupabaseClient();
+
   try {
-    return await operation(supabase, userId)
+    return await operation(supabase, userId);
   } catch (error) {
     if (error instanceof Error) {
       throw new AuthRLSError(
@@ -131,9 +136,9 @@ export async function withUserContext<T>(
         userId,
         'database_operation',
         error
-      )
+      );
     }
-    throw error
+    throw error;
   }
 }
 
@@ -147,19 +152,16 @@ export async function getUserData<T = any>(
 ): Promise<T[]> {
   return withUserContext(async (supabase, sessionUserId) => {
     // セッションユーザーと要求ユーザーの一致確認
-    validateUserAccess(sessionUserId, userId, 'read')
+    validateUserAccess(sessionUserId, userId, 'read');
 
-    const query = supabase
-      .from(tableName)
-      .select('*')
-      .eq('user_id', userId)
+    const query = supabase.from(tableName).select('*').eq('user_id', userId);
 
     // 追加フィルターを適用
     Object.entries(filters).forEach(([key, value]) => {
-      query.eq(key, value)
-    })
+      query.eq(key, value);
+    });
 
-    const { data, error } = await query
+    const { data, error } = await query;
 
     if (error) {
       throw new AuthRLSError(
@@ -167,11 +169,11 @@ export async function getUserData<T = any>(
         userId,
         'read',
         error
-      )
+      );
     }
 
-    return data || []
-  })
+    return data || [];
+  });
 }
 
 /**
@@ -184,13 +186,13 @@ export async function createUserData<T = any>(
 ): Promise<T> {
   return withUserContext(async (supabase, sessionUserId) => {
     // セッションユーザーと要求ユーザーの一致確認
-    validateUserAccess(sessionUserId, userId, 'create')
+    validateUserAccess(sessionUserId, userId, 'create');
 
     const { data: result, error } = await supabase
       .from(tableName)
       .insert({ ...data, user_id: userId })
       .select()
-      .single()
+      .single();
 
     if (error) {
       throw new AuthRLSError(
@@ -198,11 +200,11 @@ export async function createUserData<T = any>(
         userId,
         'create',
         error
-      )
+      );
     }
 
-    return result
-  })
+    return result;
+  });
 }
 
 /**
@@ -216,7 +218,7 @@ export async function updateUserData<T = any>(
 ): Promise<T> {
   return withUserContext(async (supabase, sessionUserId) => {
     // セッションユーザーと要求ユーザーの一致確認
-    validateUserAccess(sessionUserId, userId, 'update')
+    validateUserAccess(sessionUserId, userId, 'update');
 
     const { data: result, error } = await supabase
       .from(tableName)
@@ -224,7 +226,7 @@ export async function updateUserData<T = any>(
       .eq('id', id)
       .eq('user_id', userId) // RLS + 明示的ユーザーチェック
       .select()
-      .single()
+      .single();
 
     if (error) {
       throw new AuthRLSError(
@@ -232,11 +234,11 @@ export async function updateUserData<T = any>(
         userId,
         'update',
         error
-      )
+      );
     }
 
-    return result
-  })
+    return result;
+  });
 }
 
 /**
@@ -249,13 +251,13 @@ export async function deleteUserData(
 ): Promise<void> {
   return withUserContext(async (supabase, sessionUserId) => {
     // セッションユーザーと要求ユーザーの一致確認
-    validateUserAccess(sessionUserId, userId, 'delete')
+    validateUserAccess(sessionUserId, userId, 'delete');
 
     const { error } = await supabase
       .from(tableName)
       .delete()
       .eq('id', id)
-      .eq('user_id', userId) // RLS + 明示的ユーザーチェック
+      .eq('user_id', userId); // RLS + 明示的ユーザーチェック
 
     if (error) {
       throw new AuthRLSError(
@@ -263,7 +265,7 @@ export async function deleteUserData(
         userId,
         'delete',
         error
-      )
+      );
     }
-  })
+  });
 }

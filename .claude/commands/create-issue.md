@@ -5,6 +5,7 @@ CLAUDE.mdの設計書を基に、ユーザー要求「$ARGUMENTS」から詳細�
 ## 実行手順：
 
 ### 1. **前提条件・環境確認**
+
 ```bash
 echo "📋 GitHub Issue creation starting..."
 
@@ -40,6 +41,7 @@ echo "✅ Prerequisites validated"
 ```
 
 ### 2. **設計書分析・コンテキスト抽出**
+
 ```bash
 echo "📖 Analyzing design document..."
 
@@ -57,6 +59,7 @@ echo "🔍 Extracting project context from CLAUDE.md..."
 - **フェーズ情報**: Phase 1-4の進捗と依存関係
 
 ### 3. **要求分析・技術要件変換**
+
 ```bash
 echo "🔬 Analyzing user requirements..."
 
@@ -75,13 +78,14 @@ echo "📊 Requirement analysis completed"
 ```
 
 ### 4. **優先度・フェーズ判定**
+
 ```bash
 echo "📈 Determining priority and phase..."
 
 # フェーズ判定ロジック
 PHASE_ANALYSIS="Determine appropriate phase based on:
 - Phase 1: Basic infrastructure, auth, database setup
-- Phase 2: RAG system, data collection, vector search  
+- Phase 2: RAG system, data collection, vector search
 - Phase 3: AI integration, post generation, UI
 - Phase 4: Optimization, monitoring, scaling"
 
@@ -98,6 +102,7 @@ echo "🎯 Phase and priority determined"
 ### 5. **Issue内容自動生成**
 
 #### 5.1 **タイトル生成**
+
 ```bash
 echo "📝 Generating issue title..."
 
@@ -107,6 +112,7 @@ TITLE_PATTERN="[Phase X-Y]: [Category] - [Brief Description]"
 ```
 
 #### 5.2 **詳細内容生成**
+
 ```bash
 echo "📄 Generating detailed issue content..."
 
@@ -127,7 +133,7 @@ cat > issue_body.md << 'EOF'
 - **状態管理**: [Zustand/TanStack Query使用箇所]
 - **UI/UX**: [shadcn/ui、Tailwind CSS要件]
 
-### バックエンド要件  
+### バックエンド要件
 - **技術**: AWS Lambda (Node.js 18), API Gateway
 - **関数**: [必要なLambda関数一覧]
 - **外部API**: [OpenAI, GitHub等の統合要件]
@@ -183,7 +189,7 @@ cat > issue_body.md << 'EOF'
 
 ### フロントエンド実装
 - [ ] [コンポーネント1]の実装
-- [ ] [コンポーネント2]の実装  
+- [ ] [コンポーネント2]の実装
 - [ ] [状態管理]の実装
 - [ ] [API連携]の実装
 - [ ] [エラーハンドリング]の実装
@@ -276,6 +282,7 @@ echo "✅ Issue content generated"
 ```
 
 ### 6. **ラベル・優先度設定**
+
 ```bash
 echo "🏷️ Setting labels and priority..."
 
@@ -307,6 +314,7 @@ echo "🏷️ Labels: $FINAL_LABELS"
 ```
 
 ### 7. **Issue作成実行**
+
 ```bash
 echo "🚀 Creating GitHub issue..."
 
@@ -321,7 +329,7 @@ ISSUE_URL=$(gh issue create \
 if [ -n "$ISSUE_URL" ]; then
   # Issue番号抽出
   ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -o '[0-9]\+$')
-  
+
   echo "✅ Issue created successfully!"
   echo "📋 Issue #$ISSUE_NUMBER"
   echo "🔗 URL: $ISSUE_URL"
@@ -333,6 +341,7 @@ fi
 ```
 
 ### 8. **関連作業の準備**
+
 ```bash
 echo "📋 Preparing related workflows..."
 
@@ -359,6 +368,7 @@ echo "   4. Notify team members if needed"
 ```
 
 ### 9. **実装計画生成**
+
 ```bash
 echo "📊 Generating implementation plan..."
 
@@ -369,7 +379,7 @@ cat > implementation_plan_$ISSUE_NUMBER.md << EOF
 
 ### Week 1: Design & Setup
 - [ ] Detailed technical design
-- [ ] Database schema finalization  
+- [ ] Database schema finalization
 - [ ] API interface design
 - [ ] Test case design
 
@@ -378,7 +388,7 @@ cat > implementation_plan_$ISSUE_NUMBER.md << EOF
 - [ ] TDD Green Phase: Basic implementation
 - [ ] Core functionality development
 
-### Week 3: Integration & Testing  
+### Week 3: Integration & Testing
 - [ ] Integration testing
 - [ ] Security validation
 - [ ] Performance testing
@@ -403,7 +413,7 @@ cat > implementation_plan_$ISSUE_NUMBER.md << EOF
    \`\`\`
 
 3. **Create PR**
-   \`\`\`bash  
+   \`\`\`bash
    claude-code create-pr
    \`\`\`
 
@@ -419,10 +429,11 @@ echo "📋 Implementation plan saved: implementation_plan_$ISSUE_NUMBER.md"
 ```
 
 ### 10. **最終サマリー・レポート**
+
 ```bash
 echo "📊 Issue Creation Summary:"
 echo "=========================="
-echo "📝 Request: $USER_REQUEST"  
+echo "📝 Request: $USER_REQUEST"
 echo "📋 Issue: #$ISSUE_NUMBER"
 echo "🎯 Category: $CATEGORY_LABELS"
 echo "⚡ Priority: $PRIORITY_LABEL"
@@ -442,11 +453,12 @@ echo "   Next: claude-code start-feature $ISSUE_NUMBER"
 ## 🎯 使用例
 
 ### **基本的な使用方法**
+
 ```bash
 # 認証機能の実装
 claude-code create-issue "Google OAuth認証システムの実装"
 
-# AI統合機能  
+# AI統合機能
 claude-code create-issue "OpenAI APIを使った投稿生成機能"
 
 # データベース機能
@@ -457,6 +469,7 @@ claude-code create-issue "投稿管理ダッシュボードUI作成"
 ```
 
 ### **高度な使用方法**
+
 ```bash
 # 複雑な機能要求
 claude-code create-issue "ユーザー固有のベクトル検索システムでRLS保護とパフォーマンス最適化を含む実装"
@@ -471,6 +484,7 @@ claude-code create-issue "Lambda関数の実行時間最適化とコスト削減
 ## 🔧 カスタマイズ設定
 
 ### **プロジェクト固有設定**
+
 ```bash
 # プロジェクト名設定
 PROJECT_NAME="X-Post-AI-Generator"
@@ -486,6 +500,7 @@ AUTO_MILESTONE=true
 ```
 
 ### **テンプレート拡張**
+
 ```bash
 # カスタムテンプレートディレクトリ
 TEMPLATE_DIR=".github/issue_templates"

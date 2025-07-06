@@ -1,18 +1,18 @@
-import { NextAuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import { SupabaseAdapter } from '@auth/supabase-adapter'
-import { createClient } from '@supabase/supabase-js'
+import { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import { SupabaseAdapter } from '@auth/supabase-adapter';
+import { createClient } from '@supabase/supabase-js';
 
 // Supabase client for NextAuth adapter
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 if (!supabaseUrl) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL is required for NextAuth')
+  throw new Error('NEXT_PUBLIC_SUPABASE_URL is required for NextAuth');
 }
 
 if (!supabaseServiceKey) {
-  throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for NextAuth')
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for NextAuth');
 }
 
 // Create Supabase client for NextAuth adapter (server-side)
@@ -21,7 +21,7 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
     autoRefreshToken: false,
     persistSession: false,
   },
-})
+});
 
 export const authOptions: NextAuthOptions = {
   // Configure Supabase adapter
@@ -62,46 +62,46 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account, profile }) {
       // Add user ID to token when user signs in
       if (user) {
-        token.uid = user.id
-        token.email = user.email
-        token.name = user.name
-        token.picture = user.image
+        token.uid = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.picture = user.image;
       }
 
       // Add provider information
       if (account) {
-        token.provider = account.provider
-        token.providerAccountId = account.providerAccountId
+        token.provider = account.provider;
+        token.providerAccountId = account.providerAccountId;
       }
 
-      return token
+      return token;
     },
 
     // Session callback - runs whenever session is accessed
     async session({ session, token }) {
       // Add user ID to session for RLS
       if (token) {
-        session.user.id = token.uid as string
-        session.user.email = token.email as string
-        session.user.name = token.name as string
-        session.user.image = token.picture as string
+        session.user.id = token.uid as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string;
       }
 
-      return session
+      return session;
     },
 
     // Redirect callback - control where user goes after sign in
     async redirect({ url, baseUrl }) {
       // Allow relative callback URLs
       if (url.startsWith('/')) {
-        return `${baseUrl}${url}`
+        return `${baseUrl}${url}`;
       }
       // Allow same-origin URLs
       if (new URL(url).origin === baseUrl) {
-        return url
+        return url;
       }
       // Default redirect
-      return baseUrl
+      return baseUrl;
     },
   },
 
@@ -120,18 +120,18 @@ export const authOptions: NextAuthOptions = {
         email: user.email,
         provider: account?.provider,
         isNewUser,
-      })
+      });
     },
     async signOut({ session, token }) {
       console.log('👋 User signed out:', {
         userId: token?.uid || session?.user?.id,
-      })
+      });
     },
     async createUser({ user }) {
       console.log('👤 New user created:', {
         userId: user.id,
         email: user.email,
-      })
+      });
     },
   },
 
@@ -151,7 +151,7 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
-}
+};
 
 // Export default for NextAuth API route
-export default authOptions
+export default authOptions;

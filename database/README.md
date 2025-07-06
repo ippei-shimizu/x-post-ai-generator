@@ -77,6 +77,7 @@ npx supabase db test
 ### セキュリティ機能
 
 #### Row Level Security（RLS）
+
 すべてのテーブルにRLSポリシーが実装され、ユーザーが自分のデータのみにアクセスできることを保証：
 
 ```sql
@@ -86,6 +87,7 @@ CREATE POLICY "Users can view own personas" ON personas
 ```
 
 #### ベクトル検索分離
+
 `search_user_content` 関数には追加のセキュリティチェックが含まれています：
 
 ```sql
@@ -98,13 +100,17 @@ END IF;
 ## 関数
 
 ### search_user_content()
+
 ユーザー自身のコンテンツ内でベクトル類似度検索を実行：
+
 - **入力**: user_id、query_vector、similarity_threshold、match_count
 - **出力**: 類似度スコア付きの関連コンテンツチャンク
 - **セキュリティ**: ユーザーデータ分離を強制
 
 ### get_user_rag_metrics()
+
 ユーザー固有RAGシステムパフォーマンスを分析：
+
 - **入力**: user_id、date_range
 - **出力**: 品質メトリクスと使用統計
 - **セキュリティ**: ユーザースコープ分析のみ
@@ -112,6 +118,7 @@ END IF;
 ## テスト
 
 ### RLSテスト
+
 分離テストを実行してセキュリティを検証：
 
 ```bash
@@ -119,6 +126,7 @@ psql -f database/tests/rls_user_isolation_test.sql
 ```
 
 ### テストカバレッジ
+
 - すべてのテーブルでのユーザーデータ分離
 - ベクトル検索セキュリティ
 - 関数アクセス制御
@@ -127,12 +135,15 @@ psql -f database/tests/rls_user_isolation_test.sql
 ## パフォーマンス考慮事項
 
 ### インデックス
+
 ユーザースコープクエリ用に最適化されたインデックス：
+
 - `idx_content_embeddings_user_id`: 高速ユーザーフィルタリング
 - `idx_content_embeddings_vector`: ベクトル類似度検索
 - `idx_*_user_*`: ユーザースコープ複合インデックス
 
 ### ベクトル検索最適化
+
 - 1536次元ベクトル用の100リストIVFFLATインデックス
 - セマンティックマッチング用コサイン類似度
 - ユーザー別設定可能な類似度閾値
@@ -140,11 +151,13 @@ psql -f database/tests/rls_user_isolation_test.sql
 ## 監視とメンテナンス
 
 ### 自動クリーンアップ
+
 - 生コンテンツは30日で期限切れ
 - 期限切れコンテンツは関連テーブルにカスケード
 - ストレージ使用量を最適化
 
 ### コスト追跡
+
 - ユーザー別API使用量ログ
 - トークン消費追跡
 - 操作タイプ別コスト分析
@@ -196,9 +209,9 @@ SELECT auth.uid();
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM personas WHERE user_id = auth.uid();
 
 -- ベクトル検索パフォーマンスを監視
-EXPLAIN (ANALYZE, BUFFERS) 
-SELECT * FROM content_embeddings 
-ORDER BY embedding <=> '[0.1,0.2,0.3]'::vector 
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM content_embeddings
+ORDER BY embedding <=> '[0.1,0.2,0.3]'::vector
 LIMIT 10;
 ```
 

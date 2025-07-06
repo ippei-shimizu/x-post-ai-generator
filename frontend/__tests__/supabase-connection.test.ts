@@ -33,7 +33,7 @@ describe('Supabase Connection', () => {
     // For testing, we'll set mock environment variables
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-    
+
     expect(process.env.NEXT_PUBLIC_SUPABASE_URL).toBeDefined();
     expect(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY).toBeDefined();
     expect(process.env.NEXT_PUBLIC_SUPABASE_URL).not.toBe('');
@@ -70,10 +70,12 @@ describe('Supabase Authentication', () => {
     // Mock the getUser function to return a specific response
     (supabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: null },
-      error: null
+      error: null,
     });
-    
-    const { data: { user } } = await supabase.auth.getUser();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     // Initially this will be null since no user is logged in
     expect(user).toBeNull();
   });

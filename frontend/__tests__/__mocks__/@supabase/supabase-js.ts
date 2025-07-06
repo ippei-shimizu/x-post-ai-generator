@@ -9,9 +9,15 @@ export const createClient = jest.fn(() => ({
     delete: jest.fn(() => Promise.resolve({ data: null, error: null })),
   })),
   auth: {
-    getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
-    getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-    signInWithOAuth: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    getUser: jest.fn(() =>
+      Promise.resolve({ data: { user: null }, error: null })
+    ),
+    getSession: jest.fn(() =>
+      Promise.resolve({ data: { session: null }, error: null })
+    ),
+    signInWithOAuth: jest.fn(() =>
+      Promise.resolve({ data: null, error: null })
+    ),
     signOut: jest.fn(() => Promise.resolve({ error: null })),
   },
   rpc: jest.fn(() => Promise.resolve({ data: [], error: null })),

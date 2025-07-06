@@ -1,5 +1,5 @@
-import { DefaultSession, DefaultUser } from 'next-auth'
-import { JWT, DefaultJWT } from 'next-auth/jwt'
+import { DefaultSession, DefaultUser } from 'next-auth';
+import { JWT, DefaultJWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
   /**
@@ -7,11 +7,11 @@ declare module 'next-auth' {
    */
   interface Session {
     user: {
-      id: string
-      email: string
-      name: string
-      image?: string
-    } & DefaultSession['user']
+      id: string;
+      email: string;
+      name: string;
+      image?: string;
+    } & DefaultSession['user'];
   }
 
   /**
@@ -19,21 +19,21 @@ declare module 'next-auth' {
    * or the second parameter of the `session` callback, when using a database.
    */
   interface User extends DefaultUser {
-    id: string
-    email: string
-    name: string
-    image?: string
+    id: string;
+    email: string;
+    name: string;
+    image?: string;
   }
 }
 
 declare module 'next-auth/jwt' {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT extends DefaultJWT {
-    uid: string
-    email: string
-    name: string
-    picture?: string
-    provider?: string
-    providerAccountId?: string
+    uid: string;
+    email: string;
+    name: string;
+    picture?: string;
+    provider?: string;
+    providerAccountId?: string;
   }
 }

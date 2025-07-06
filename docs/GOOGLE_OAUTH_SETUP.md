@@ -30,13 +30,15 @@
 3. **Application type**: Web application
 4. **Name**: X-Post AI Generator Web Client
 5. **Authorized redirect URIs** を追加：
+
    ```
    # 本番環境用
    https://your-project.supabase.co/auth/v1/callback
-   
+
    # ローカル開発用（必要に応じて）
    http://127.0.0.1:54321/auth/v1/callback
    ```
+
 6. **Create** をクリック
 7. **Client ID** と **Client Secret** をコピーして保存
 
@@ -66,20 +68,20 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id-from-console
 
 ```javascript
 // 認証テスト用コード
-import { supabase } from '@/lib/supabase'
+import { supabase } from "@/lib/supabase";
 
 // Google OAuth サインイン
 const signInWithGoogle = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`
-    }
-  })
-  
-  if (error) console.error('OAuth Error:', error)
-  return data
-}
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+
+  if (error) console.error("OAuth Error:", error);
+  return data;
+};
 ```
 
 ### 2. コールバック処理
@@ -99,7 +101,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       const { data, error } = await supabase.auth.getSession()
-      
+
       if (error) {
         console.error('Auth callback error:', error)
         router.push('/auth/error')
@@ -140,14 +142,15 @@ export default function AuthCallback() {
 ### 2. スコープ設定
 
 Google OAuth で要求するスコープを最小限に：
+
 ```javascript
 const { data, error } = await supabase.auth.signInWithOAuth({
-  provider: 'google',
+  provider: "google",
   options: {
-    scopes: 'email profile', // 必要最小限のスコープ
-    redirectTo: callbackUrl
-  }
-})
+    scopes: "email profile", // 必要最小限のスコープ
+    redirectTo: callbackUrl,
+  },
+});
 ```
 
 ### 3. トークン管理
@@ -177,9 +180,9 @@ const { data, error } = await supabase.auth.signInWithOAuth({
 ```javascript
 // 認証状態のデバッグ
 supabase.auth.onAuthStateChange((event, session) => {
-  console.log('Auth event:', event)
-  console.log('Session:', session)
-})
+  console.log("Auth event:", event);
+  console.log("Session:", session);
+});
 ```
 
 ## 📚 参考リンク

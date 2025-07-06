@@ -22,7 +22,7 @@
     "test:coverage": "jest --coverage",
     "quality": "pnpm run type-check && pnpm run lint && pnpm run format:check && pnpm run test",
     "env:dev": "cp .env.development .env.local",
-    "env:staging": "cp .env.staging .env.local", 
+    "env:staging": "cp .env.staging .env.local",
     "env:prod": "cp .env.production .env.local"
   },
   "dependencies": {
