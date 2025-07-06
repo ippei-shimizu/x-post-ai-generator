@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export interface UseAuthReturn {
-  user: {
-    id?: string;
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  } | undefined;
+  user:
+    | {
+        id?: string;
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+      }
+    | undefined;
   isLoading: boolean;
   isAuthenticated: boolean;
   userId: string | undefined;

@@ -123,7 +123,8 @@ export const getUserId = async (): Promise<string | null> => {
 
 // Enhanced error handler for Supabase operations
 export const handleSupabaseError = (error: unknown, operation: string) => {
-  const errorMessage = (error as { message?: string })?.message || 'Unknown error';
+  const errorMessage =
+    (error as { message?: string })?.message || 'Unknown error';
   const errorCode = (error as { code?: string })?.code || 'UNKNOWN';
 
   console.error(`Supabase ${operation} error [${errorCode}]:`, errorMessage);
