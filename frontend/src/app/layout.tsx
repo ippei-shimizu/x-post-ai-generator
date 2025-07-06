@@ -29,10 +29,7 @@ export default async function RootLayout({
     <html lang="ja" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
         <SessionProvider session={session}>
-          <AuthProvider
-            sessionCheckInterval={60000}
-            autoRefresh={true}
-          >
+          <AuthProvider sessionCheckInterval={60000} autoRefresh={true}>
             {children}
           </AuthProvider>
         </SessionProvider>
