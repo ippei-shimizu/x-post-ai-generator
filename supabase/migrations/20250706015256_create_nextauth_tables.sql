@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 -- 既存のusersテーブルと競合しないよう、auth_users として作成
 CREATE TABLE IF NOT EXISTS auth_users (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    google_id varchar(255) UNIQUE, -- Google OAuth の数値ID
     name varchar(255),
     email varchar(255) UNIQUE,
     email_verified timestamp with time zone,
@@ -70,6 +71,7 @@ CREATE INDEX IF NOT EXISTS sessions_expires_idx ON sessions(expires);
 
 -- auth_users テーブル用インデックス
 CREATE INDEX IF NOT EXISTS auth_users_email_idx ON auth_users(email);
+CREATE INDEX IF NOT EXISTS auth_users_google_id_idx ON auth_users(google_id);
 
 -- verification_tokens テーブル用インデックス
 CREATE INDEX IF NOT EXISTS verification_tokens_token_idx ON verification_tokens(token);

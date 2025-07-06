@@ -32,8 +32,7 @@ export const authOptions: NextAuthOptions = {
         params: {
           // Request additional Google scopes if needed
           scope: 'openid email profile',
-          // Ensure fresh consent for better security
-          prompt: 'consent',
+          // Remove prompt: 'consent' for development to avoid repeated consent
           access_type: 'offline',
           response_type: 'code',
         },
@@ -72,11 +71,15 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (!existingUser) {
+            // Generate UUID for user ID (Google provides numeric string, not UUID)
+            const userId = crypto.randomUUID();
+
             // Create new user in auth_users table
             const { error: insertError } = await supabaseAdmin
               .from('auth_users')
               .insert({
-                id: user.id,
+                id: userId,
+                google_id: user.id, // Store original Google ID separately
                 email: user.email,
                 name: user.name || '',
                 image: user.image || '',
@@ -102,8 +105,15 @@ export const authOptions: NextAuthOptions = {
     // JWT callback - runs whenever JWT is created/updated
     async jwt({ token, user, account }) {
       // Add user ID to token when user signs in
-      if (user) {
-        token.uid = user.id;
+      if (user && user.email) {
+        // Get the UUID from database (not the Google numeric ID)
+        const { data: dbUser } = await supabaseAdmin
+          .from('auth_users')
+          .select('id')
+          .eq('email', user.email)
+          .single();
+
+        token.uid = dbUser?.id || user.id;
         token.email = user.email || '';
         token.name = user.name || '';
         token.picture = user.image || '';
@@ -178,6 +188,19 @@ export const authOptions: NextAuthOptions = {
 
   // Enable debug mode in development
   debug: process.env.NODE_ENV === 'development',
+
+  // Custom logger for detailed debugging
+  logger: {
+    error(code, metadata) {
+      console.error('NextAuth Error:', code, metadata);
+    },
+    warn(code) {
+      console.warn('NextAuth Warning:', code);
+    },
+    debug(code, metadata) {
+      console.log('NextAuth Debug:', code, metadata);
+    },
+  },
 
   // Security settings
   useSecureCookies: process.env.NODE_ENV === 'production',
