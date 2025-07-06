@@ -11,6 +11,8 @@ const customJestConfig = {
   testEnvironment: 'jsdom',
   testMatch: ['**/__tests__/**/*.(ts|tsx|js)', '**/*.(test|spec).(ts|tsx|js)'],
   testPathIgnorePatterns: ['<rootDir>/__tests__/__mocks__/'],
+  maxWorkers: 1,
+  workerIdleMemoryLimit: '512MB',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
