@@ -10,9 +10,14 @@ build/
 
 # Environment variables
 .env
-.env.*
-!.env.example
+.env.local
 !.env.local.example
+!.env.development
+!.env.production  
+!.env.staging
+.env.development.local
+.env.production.local
+.env.staging.local
 
 # Runtime data
 pids
