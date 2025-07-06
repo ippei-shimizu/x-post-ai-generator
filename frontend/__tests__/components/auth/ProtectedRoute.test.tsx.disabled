@@ -1,0 +1,89 @@
+/**
+ * ProtectedRoute TDD テスト - Green Phase 
+ * 認証ルートガード機能のテスト（メモリ最適化版）
+ */
+
+import { render, screen, waitFor } from '@testing-library/react';
+import { SessionProvider } from 'next-auth/react';
+import '@testing-library/jest-dom';
+
+import { ProtectedRoute } from '../../../src/components/auth/ProtectedRoute';
+import { AuthProvider } from '../../../src/providers/AuthProvider';
+
+// Mock Next.js navigation
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
+}));
+
+// Mock NextAuth
+const mockUseSession = jest.fn();
+jest.mock('next-auth/react', () => ({
+  SessionProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useSession: () => mockUseSession(),
+}));
+
+// テスト用データ（最小化）
+const SESSION = {
+  user: { id: '550e8400-e29b-41d4-a716-446655440000', email: 'test@example.com' },
+  expires: '2025-12-31T23:59:59.000Z',
+};
+
+const Content = () => <div data-testid="protected-content">Protected</div>;
+
+describe('ProtectedRoute', () => {
+  beforeEach(() => {
+    mockUseSession.mockReturnValue({ data: SESSION, status: 'authenticated' });
+    mockPush.mockClear();
+  });
+
+  it('redirects unauthenticated users', async () => {
+    mockUseSession.mockReturnValue({ data: null, status: 'unauthenticated' });
+
+    render(
+      <SessionProvider session={null}>
+        <AuthProvider>
+          <ProtectedRoute>
+            <Content />
+          </ProtectedRoute>
+        </AuthProvider>
+      </SessionProvider>
+    );
+
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/auth/signin');
+    });
+  });
+
+  it('allows authenticated users', () => {
+    render(
+      <SessionProvider session={SESSION}>
+        <AuthProvider>
+          <ProtectedRoute>
+            <Content />
+          </ProtectedRoute>
+        </AuthProvider>
+      </SessionProvider>
+    );
+
+    expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+  });
+
+  it('shows loading state', () => {
+    mockUseSession.mockReturnValue({ data: null, status: 'loading' });
+
+    render(
+      <SessionProvider session={null}>
+        <AuthProvider>
+          <ProtectedRoute>
+            <Content />
+          </ProtectedRoute>
+        </AuthProvider>
+      </SessionProvider>
+    );
+
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+  });
+});
