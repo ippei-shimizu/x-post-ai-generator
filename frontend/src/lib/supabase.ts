@@ -11,7 +11,9 @@ if (!supabaseUrl) {
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is required');
+  throw new Error(
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is required'
+  );
 }
 
 // Validate URL format
@@ -53,7 +55,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 // Server-side client for admin operations (service role)
 export const createServerClient = () => {
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
+
   if (!supabaseServiceKey) {
     throw new Error('Missing Supabase service role key');
   }
@@ -74,7 +76,10 @@ export const createServerClient = () => {
 // Enhanced helper function to get current user with error handling
 export const getCurrentUser = async () => {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     if (error) {
       console.error('Error fetching user:', error.message);
       return null;
@@ -89,8 +94,12 @@ export const getCurrentUser = async () => {
 // Optimized authentication check with caching
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session !== null && session.expires_at ? new Date(session.expires_at * 1000) > new Date() : false;
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session !== null && session.expires_at
+      ? new Date(session.expires_at * 1000) > new Date()
+      : false;
   } catch (error) {
     console.error('Error checking authentication:', error);
     return false;
@@ -116,9 +125,9 @@ export const getUserId = async (): Promise<string | null> => {
 export const handleSupabaseError = (error: any, operation: string) => {
   const errorMessage = error?.message || 'Unknown error';
   const errorCode = error?.code || 'UNKNOWN';
-  
+
   console.error(`Supabase ${operation} error [${errorCode}]:`, errorMessage);
-  
+
   // Handle specific error types
   switch (errorCode) {
     case 'PGRST116': // Row Level Security violation

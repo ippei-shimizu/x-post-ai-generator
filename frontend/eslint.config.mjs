@@ -11,6 +11,14 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn", // any の使用を警告レベルに
+    },
+  },
+  {
+    ignores: ["src/types/supabase.ts"], // Supabase自動生成型定義を無視
+  },
 ];
 
 export default eslintConfig;

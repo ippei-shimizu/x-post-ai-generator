@@ -1,16 +1,16 @@
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
+import type { Metadata, Viewport } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "X-Post AI Generator",
-  description: "AI-powered X (Twitter) post generator for engineers",
-  keywords: ["AI", "Twitter", "X", "post generation", "engineering"],
-  authors: [{ name: "X-Post AI Generator Team" }],
-  robots: "index, follow",
+  title: 'X-Post AI Generator',
+  description: 'AI-powered X (Twitter) post generator for engineers',
+  keywords: ['AI', 'Twitter', 'X', 'post generation', 'engineering'],
+  authors: [{ name: 'X-Post AI Generator Team' }],
+  robots: 'index, follow',
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
 };
 

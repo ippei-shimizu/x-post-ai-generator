@@ -286,29 +286,44 @@ export type Persona = Database['public']['Tables']['personas']['Row'];
 export type PersonaInsert = Database['public']['Tables']['personas']['Insert'];
 export type PersonaUpdate = Database['public']['Tables']['personas']['Update'];
 
-export type GeneratedPost = Database['public']['Tables']['generated_posts']['Row'];
-export type GeneratedPostInsert = Database['public']['Tables']['generated_posts']['Insert'];
-export type GeneratedPostUpdate = Database['public']['Tables']['generated_posts']['Update'];
+export type GeneratedPost =
+  Database['public']['Tables']['generated_posts']['Row'];
+export type GeneratedPostInsert =
+  Database['public']['Tables']['generated_posts']['Insert'];
+export type GeneratedPostUpdate =
+  Database['public']['Tables']['generated_posts']['Update'];
 
-export type ContentSource = Database['public']['Tables']['content_sources']['Row'];
-export type ContentSourceInsert = Database['public']['Tables']['content_sources']['Insert'];
-export type ContentSourceUpdate = Database['public']['Tables']['content_sources']['Update'];
+export type ContentSource =
+  Database['public']['Tables']['content_sources']['Row'];
+export type ContentSourceInsert =
+  Database['public']['Tables']['content_sources']['Insert'];
+export type ContentSourceUpdate =
+  Database['public']['Tables']['content_sources']['Update'];
 
-export type ContentEmbedding = Database['public']['Tables']['content_embeddings']['Row'];
-export type ContentEmbeddingInsert = Database['public']['Tables']['content_embeddings']['Insert'];
-export type ContentEmbeddingUpdate = Database['public']['Tables']['content_embeddings']['Update'];
+export type ContentEmbedding =
+  Database['public']['Tables']['content_embeddings']['Row'];
+export type ContentEmbeddingInsert =
+  Database['public']['Tables']['content_embeddings']['Insert'];
+export type ContentEmbeddingUpdate =
+  Database['public']['Tables']['content_embeddings']['Update'];
 
 export type UserSettings = Database['public']['Tables']['user_settings']['Row'];
-export type UserSettingsInsert = Database['public']['Tables']['user_settings']['Insert'];
-export type UserSettingsUpdate = Database['public']['Tables']['user_settings']['Update'];
+export type UserSettingsInsert =
+  Database['public']['Tables']['user_settings']['Insert'];
+export type UserSettingsUpdate =
+  Database['public']['Tables']['user_settings']['Update'];
 
 export type ApiUsageLog = Database['public']['Tables']['api_usage_logs']['Row'];
-export type ApiUsageLogInsert = Database['public']['Tables']['api_usage_logs']['Insert'];
-export type ApiUsageLogUpdate = Database['public']['Tables']['api_usage_logs']['Update'];
+export type ApiUsageLogInsert =
+  Database['public']['Tables']['api_usage_logs']['Insert'];
+export type ApiUsageLogUpdate =
+  Database['public']['Tables']['api_usage_logs']['Update'];
 
 // Function types
-export type UserContentSearchResult = Database['public']['Functions']['search_user_content']['Returns'][0];
-export type UserRAGMetrics = Database['public']['Functions']['get_user_rag_metrics']['Returns'];
+export type UserContentSearchResult =
+  Database['public']['Functions']['search_user_content']['Returns'][0];
+export type UserRAGMetrics =
+  Database['public']['Functions']['get_user_rag_metrics']['Returns'];
 
 // Common enums
 export type PostStatus = 'draft' | 'published' | 'archived';
