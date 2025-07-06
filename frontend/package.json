@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "dev:staging": "NODE_ENV=staging next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "dev:staging": "NODE_ENV=staging next dev",
     "build": "next build",
     "build:staging": "NODE_ENV=staging next build",
     "build:production": "NODE_ENV=production next build",
