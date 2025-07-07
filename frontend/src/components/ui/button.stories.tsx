@@ -122,7 +122,16 @@ export const Icon: Story = {
 export const Loading: Story = {
   args: {
     loading: true,
-    children: 'Loading...',
+    children: 'Submit',
+    loadingText: 'Submitting your request...',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'ローディング状態のボタン。loadingTextでスクリーンリーダー向けの説明をカスタマイズ可能',
+      },
+    },
   },
 };
 

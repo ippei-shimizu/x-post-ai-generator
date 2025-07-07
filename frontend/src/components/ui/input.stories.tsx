@@ -268,3 +268,23 @@ export const FormExample: Story = {
     },
   },
 };
+
+export const AccessibilityFeatures: Story = {
+  args: {
+    label: 'Email Address',
+    type: 'email',
+    placeholder: 'example@domain.com',
+    description: 'Enter your work email address for notifications',
+    required: true,
+    maxLength: 100,
+    helperText: 'Please use a valid email format',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'アクセシビリティ機能の完全デモ。label、description、required、制限表示を含む',
+      },
+    },
+  },
+};

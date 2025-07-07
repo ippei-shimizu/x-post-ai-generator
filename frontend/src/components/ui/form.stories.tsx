@@ -40,7 +40,7 @@ export const Default: Story = {
             <label className="text-sm font-medium">Email</label>
             <Input
               type="email"
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="your@email.com"
               error={!!error}
@@ -73,7 +73,7 @@ export const OnBlurValidation: Story = {
               Username (validates on blur)
             </label>
             <Input
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               onBlur={onBlur}
               placeholder="Enter username"
@@ -107,7 +107,7 @@ export const OnChangeValidation: Story = {
             </label>
             <Input
               type="password"
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Enter password"
               error={!!error}
@@ -135,7 +135,7 @@ export const MultipleFields: Story = {
           <div>
             <label className="text-sm font-medium">First Name</label>
             <Input
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="John"
               error={!!error}
@@ -150,7 +150,7 @@ export const MultipleFields: Story = {
           <div>
             <label className="text-sm font-medium">Last Name</label>
             <Input
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Doe"
               error={!!error}
@@ -175,7 +175,7 @@ export const MultipleFields: Story = {
             <label className="text-sm font-medium">Email</label>
             <Input
               type="email"
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="john@example.com"
               error={!!error}
@@ -207,7 +207,7 @@ export const WithDefaultValues: Story = {
           <div>
             <label className="text-sm font-medium">Username</label>
             <Input
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Enter username"
             />
@@ -220,7 +220,7 @@ export const WithDefaultValues: Story = {
           <div>
             <label className="text-sm font-medium">Bio</label>
             <textarea
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Tell us about yourself"
               className="w-full rounded-md border p-2"
@@ -261,7 +261,7 @@ export const AsyncValidation: Story = {
               Username (try &quot;admin&quot;)
             </label>
             <Input
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               onBlur={onBlur}
               placeholder="Enter username"
@@ -285,7 +285,7 @@ export const AsyncValidation: Story = {
 export const WithLoading: Story = {
   render: args => (
     <Form {...args} className="w-80">
-      {({ isSubmitting }) => (
+      {({ isSubmitting }: { isSubmitting: boolean }) => (
         <>
           <FormField name="email" rules={{ required: true }}>
             {({ value, onChange, error }) => (
@@ -293,7 +293,7 @@ export const WithLoading: Story = {
                 <label className="text-sm font-medium">Email</label>
                 <Input
                   type="email"
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   placeholder="your@email.com"
                   disabled={isSubmitting}
@@ -342,7 +342,7 @@ export const ComplexValidation: Story = {
             <label className="text-sm font-medium">Password</label>
             <Input
               type="password"
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Enter secure password"
               error={!!error}
@@ -359,8 +359,8 @@ export const ComplexValidation: Story = {
         name="confirmPassword"
         rules={{
           required: 'Please confirm password',
-          validate: (value, formData) => {
-            if (value !== formData.password) {
+          validate: (value: unknown, formData?: Record<string, unknown>) => {
+            if (value !== formData?.password) {
               return 'Passwords do not match';
             }
             return true;
@@ -372,7 +372,7 @@ export const ComplexValidation: Story = {
             <label className="text-sm font-medium">Confirm Password</label>
             <Input
               type="password"
-              value={value}
+              value={value as string}
               onChange={e => onChange(e.target.value)}
               placeholder="Confirm password"
               error={!!error}
