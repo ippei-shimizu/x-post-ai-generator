@@ -106,9 +106,13 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
       return React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === CardHeader) {
-          return React.cloneElement(child as React.ReactElement<CardHeaderProps>, {
-            headingLevel: (child.props as CardHeaderProps).headingLevel || headingLevel,
-          });
+          return React.cloneElement(
+            child as React.ReactElement<CardHeaderProps>,
+            {
+              headingLevel:
+                (child.props as CardHeaderProps).headingLevel || headingLevel,
+            }
+          );
         }
         return child;
       });
@@ -150,7 +154,13 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
     const hasAction = !!action;
 
     // Dynamic heading component based on level
-    const HeadingComponent = `h${headingLevel}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+    const HeadingComponent = `h${headingLevel}` as
+      | 'h1'
+      | 'h2'
+      | 'h3'
+      | 'h4'
+      | 'h5'
+      | 'h6';
 
     return (
       <div

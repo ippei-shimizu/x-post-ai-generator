@@ -156,7 +156,10 @@ export interface ValidationRule {
   minLength?: { value: number; message: string };
   maxLength?: { value: number; message: string };
   pattern?: { value: RegExp; message: string };
-  validate?: (value: unknown, formData?: Record<string, unknown>) => string | boolean | Promise<string | boolean>;
+  validate?: (
+    value: unknown,
+    formData?: Record<string, unknown>
+  ) => string | boolean | Promise<string | boolean>;
 }
 
 /**
@@ -174,13 +177,20 @@ export interface FormFieldProps {
 /**
  * フォームのProps
  */
-export interface FormProps extends Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'children'> {
+export interface FormProps
+  extends Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'children'> {
   onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
   defaultValues?: Record<string, unknown>;
   mode?: 'onSubmit' | 'onBlur' | 'onChange' | 'all';
   showErrorSummary?: boolean; // エラーサマリーの表示制御
   errorSummaryTitle?: string; // エラーサマリーのタイトル
-  children?: ReactNode | ((context: { isSubmitting: boolean; values: Record<string, unknown>; errors: Record<string, string> }) => ReactNode);
+  children?:
+    | ReactNode
+    | ((context: {
+        isSubmitting: boolean;
+        values: Record<string, unknown>;
+        errors: Record<string, string>;
+      }) => ReactNode);
 }
 
 // ========================================

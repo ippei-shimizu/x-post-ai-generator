@@ -132,7 +132,11 @@ describe('Form Component (TDD Red Phase)', () => {
         >
           <FormField name="email">
             {({ value }) => (
-              <input value={value as string} data-testid="email-input" readOnly />
+              <input
+                value={value as string}
+                data-testid="email-input"
+                readOnly
+              />
             )}
           </FormField>
         </Form>
@@ -148,7 +152,11 @@ describe('Form Component (TDD Red Phase)', () => {
         <Form onSubmit={handleSubmit} defaultValues={{ name: 'John' }}>
           <FormField name="name" defaultValue="Jane">
             {({ value }) => (
-              <input value={value as string} data-testid="name-input" readOnly />
+              <input
+                value={value as string}
+                data-testid="name-input"
+                readOnly
+              />
             )}
           </FormField>
         </Form>
@@ -312,7 +320,11 @@ describe('FormField Component (TDD Red Phase)', () => {
         <MockForm>
           <FormField name="test-field">
             {({ value }) => (
-              <input value={value as string} data-testid="test-input" readOnly />
+              <input
+                value={value as string}
+                data-testid="test-input"
+                readOnly
+              />
             )}
           </FormField>
         </MockForm>
@@ -326,7 +338,11 @@ describe('FormField Component (TDD Red Phase)', () => {
         <MockForm>
           <FormField name="username" label="Username">
             {({ value }) => (
-              <input value={value as string} data-testid="username-input" readOnly />
+              <input
+                value={value as string}
+                data-testid="username-input"
+                readOnly
+              />
             )}
           </FormField>
         </MockForm>
@@ -343,7 +359,11 @@ describe('FormField Component (TDD Red Phase)', () => {
             description="Must be at least 8 characters"
           >
             {({ value }) => (
-              <input value={value as string} data-testid="password-input" readOnly />
+              <input
+                value={value as string}
+                data-testid="password-input"
+                readOnly
+              />
             )}
           </FormField>
         </MockForm>
