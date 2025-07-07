@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { SessionProvider } from '@/providers/SessionProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { Header } from '@/components/layouts/Header';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,7 +31,10 @@ export default async function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <SessionProvider session={session}>
           <AuthProvider sessionCheckInterval={60000} autoRefresh={true}>
-            {children}
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+            </div>
           </AuthProvider>
         </SessionProvider>
       </body>

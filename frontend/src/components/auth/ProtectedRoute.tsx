@@ -15,7 +15,7 @@ import type {
 } from '../../types/route';
 
 // デフォルトローディングコンポーネント
-function DefaultLoadingComponent(): JSX.Element {
+function DefaultLoadingComponent(): React.JSX.Element {
   return (
     <div
       data-testid="loading-state"
@@ -32,7 +32,7 @@ function DefaultErrorComponent({
   error,
 }: {
   error: RouteProtectionError;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div
       data-testid="error-state"
@@ -63,7 +63,7 @@ export function ProtectedRoute({
   requireAuth = true,
   allowGuestAccess = false,
   validateSession = true,
-}: ProtectedRouteProps): JSX.Element {
+}: ProtectedRouteProps): React.JSX.Element {
   const router = useRouter();
 
   // useRequireAuthを使用して認証状態を管理
