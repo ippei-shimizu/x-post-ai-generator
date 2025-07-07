@@ -12,19 +12,19 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="bg-card space-y-3 rounded-lg border p-6">
+          <div className="space-y-3 rounded-lg border bg-card p-6">
             <h3 className="text-lg font-semibold">🤖 AI投稿生成</h3>
             <p className="text-sm text-muted-foreground">
               あなたのGitHubやブログから学習して、個性的な技術投稿を自動生成
             </p>
           </div>
-          <div className="bg-card space-y-3 rounded-lg border p-6">
+          <div className="space-y-3 rounded-lg border bg-card p-6">
             <h3 className="text-lg font-semibold">🔒 完全プライバシー</h3>
             <p className="text-sm text-muted-foreground">
               ユーザーデータは完全分離。他のユーザーとデータが混在することはありません
             </p>
           </div>
-          <div className="bg-card space-y-3 rounded-lg border p-6">
+          <div className="space-y-3 rounded-lg border bg-card p-6">
             <h3 className="text-lg font-semibold">⚡ 継続的発信</h3>
             <p className="text-sm text-muted-foreground">
               毎日10-20件の高品質投稿で、技術発信を継続的にサポート
