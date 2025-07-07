@@ -40,6 +40,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       variant,
       padding,
       interactive = false,
+      semanticRole,
+      headingLevel,
       onClick,
       onKeyDown,
       children,
@@ -52,12 +54,65 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (interactive && onClick && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
-          onClick(e as React.MouseEvent<HTMLDivElement>);
+          // Create a synthetic mouse event for onClick
+          const syntheticMouseEvent = {
+            type: 'click',
+            target: e.target,
+            currentTarget: e.currentTarget,
+            bubbles: e.bubbles,
+            cancelable: e.cancelable,
+            defaultPrevented: e.defaultPrevented,
+            eventPhase: e.eventPhase,
+            isTrusted: e.isTrusted,
+            preventDefault: e.preventDefault,
+            stopPropagation: e.stopPropagation,
+            timeStamp: e.timeStamp,
+            button: 0,
+            buttons: 1,
+            clientX: 0,
+            clientY: 0,
+            pageX: 0,
+            pageY: 0,
+            screenX: 0,
+            screenY: 0,
+            movementX: 0,
+            movementY: 0,
+            offsetX: 0,
+            offsetY: 0,
+            x: 0,
+            y: 0,
+            getModifierState: () => false,
+            relatedTarget: null,
+            nativeEvent: new MouseEvent('click'),
+          } as unknown as React.MouseEvent<HTMLDivElement>;
+          onClick(syntheticMouseEvent);
         }
         onKeyDown?.(e);
       },
       [interactive, onClick, onKeyDown]
     );
+
+    // Determine semantic role
+    const cardRole = React.useMemo(() => {
+      if (semanticRole === 'none') return undefined;
+      if (semanticRole) return semanticRole;
+      if (interactive && onClick) return 'button';
+      return undefined;
+    }, [semanticRole, interactive, onClick]);
+
+    // Pass headingLevel to children (specifically CardHeader)
+    const enhancedChildren = React.useMemo(() => {
+      if (!headingLevel) return children;
+
+      return React.Children.map(children, child => {
+        if (React.isValidElement(child) && child.type === CardHeader) {
+          return React.cloneElement(child as React.ReactElement<CardHeaderProps>, {
+            headingLevel: (child.props as CardHeaderProps).headingLevel || headingLevel,
+          });
+        }
+        return child;
+      });
+    }, [children, headingLevel]);
 
     return (
       <div
@@ -65,12 +120,14 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         className={cn(
           cardVariants({ variant, padding, interactive, className })
         )}
+        role={cardRole}
         onClick={interactive ? onClick : undefined}
         onKeyDown={interactive ? handleKeyDown : onKeyDown}
         tabIndex={interactive ? 0 : undefined}
+        aria-pressed={interactive && onClick ? undefined : undefined}
         {...props}
       >
-        {children}
+        {enhancedChildren}
       </div>
     );
   }
@@ -78,8 +135,22 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, title, description, action, children, ...props }, ref) => {
+  (
+    {
+      className,
+      title,
+      description,
+      action,
+      headingLevel = 3,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const hasAction = !!action;
+
+    // Dynamic heading component based on level
+    const HeadingComponent = `h${headingLevel}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
     return (
       <div
@@ -96,9 +167,9 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
         {/* Content section (title, description, and children) */}
         <div className={cn(hasAction ? 'flex flex-col space-y-1.5' : '')}>
           {title && (
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <HeadingComponent className="text-2xl font-semibold leading-none tracking-tight">
               {title}
-            </h3>
+            </HeadingComponent>
           )}
           {description && (
             <p className="text-sm text-muted-foreground">{description}</p>

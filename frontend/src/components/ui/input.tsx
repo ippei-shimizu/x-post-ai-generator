@@ -62,15 +62,29 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       placeholder,
       onChange,
       debounce,
+      label,
+      description,
+      required,
+      maxLength,
+      minLength,
       ...props
     },
     ref
   ) => {
-    const timeoutRef = React.useRef<NodeJS.Timeout>();
+    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Generate unique IDs for accessibility
     const inputId = React.useId();
     const helperTextId = helperText ? `${inputId}-helper-text` : undefined;
+    const descriptionId = description ? `${inputId}-description` : undefined;
+    const constraintsId =
+      maxLength || minLength ? `${inputId}-constraints` : undefined;
+
+    // Build aria-describedby from multiple sources
+    const ariaDescribedBy =
+      [helperTextId, descriptionId, constraintsId, props['aria-describedby']]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     // Handle input change with sanitization and debouncing
     const handleChange = React.useCallback(
@@ -110,25 +124,46 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Render the input component
     const inputElement = (
       <input
+        id={inputId}
         type={type}
         className={inputClassName}
         ref={ref}
         placeholder={escapePlaceholder(placeholder)}
         aria-invalid={error}
-        aria-describedby={helperTextId}
+        aria-required={required}
+        aria-describedby={ariaDescribedBy}
+        maxLength={maxLength}
+        minLength={minLength}
         onChange={handleChange}
         {...props}
       />
     );
 
-    // If no elements, return simple input
-    if (!leftElement && !rightElement && !helperText) {
-      return inputElement;
-    }
-
-    // Return wrapped input with elements and helper text
+    // Return component with all accessibility features
     return (
       <div className="w-full">
+        {/* Label */}
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="mb-2 block text-sm font-medium text-foreground"
+          >
+            {label}
+            {required && (
+              <span className="ml-1 text-destructive" aria-label="required">
+                *
+              </span>
+            )}
+          </label>
+        )}
+
+        {/* Description */}
+        {description && (
+          <p id={descriptionId} className="mb-2 text-sm text-muted-foreground">
+            {description}
+          </p>
+        )}
+
         {/* Input container with elements */}
         <div className="relative">
           {leftElement && (
@@ -146,7 +181,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {/* Helper text */}
+        {/* Constraints information */}
+        {(maxLength || minLength) && (
+          <div id={constraintsId} className="sr-only">
+            {minLength && `Minimum ${minLength} characters. `}
+            {maxLength && `Maximum ${maxLength} characters.`}
+          </div>
+        )}
+
+        {/* Helper text / Error message */}
         {helperText && (
           <p
             id={helperTextId}
@@ -154,6 +197,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               'mt-2 text-sm',
               error ? 'text-destructive' : 'text-muted-foreground'
             )}
+            role={error ? 'alert' : undefined}
+            aria-live={error ? 'assertive' : undefined}
           >
             {helperText}
           </p>

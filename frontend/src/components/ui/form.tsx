@@ -98,6 +98,8 @@ const Form = React.forwardRef<HTMLFormElement, FormProps>(
       onSubmit,
       defaultValues = {},
       mode = 'onSubmit',
+      showErrorSummary = true,
+      errorSummaryTitle = 'Please fix the following errors:',
       children,
       ...props
     },
@@ -254,6 +256,10 @@ const Form = React.forwardRef<HTMLFormElement, FormProps>(
       [contextValue, registerField]
     );
 
+    // Error summary functionality
+    const errorEntries = Object.entries(errors);
+    const hasErrors = errorEntries.length > 0;
+
     return (
       <FormContext.Provider value={enhancedContextValue}>
         <form
@@ -263,6 +269,42 @@ const Form = React.forwardRef<HTMLFormElement, FormProps>(
           onSubmit={handleSubmit}
           {...props}
         >
+          {/* Error Summary */}
+          {showErrorSummary && hasErrors && (
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="bg-destructive/10 rounded-md border border-destructive p-4"
+            >
+              <h2 className="mb-3 text-sm font-semibold text-destructive">
+                {errorSummaryTitle}
+              </h2>
+              <ul className="space-y-1 text-sm">
+                {errorEntries.map(([fieldName, error]) => (
+                  <li key={fieldName}>
+                    <a
+                      href={`#${fieldName}`}
+                      className="text-destructive underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
+                      onClick={e => {
+                        e.preventDefault();
+                        const field = document.getElementById(fieldName);
+                        if (field) {
+                          field.focus();
+                          field.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                          });
+                        }
+                      }}
+                    >
+                      {error}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {typeof children === 'function'
             ? children({ isSubmitting, values, errors })
             : children}
@@ -345,11 +387,6 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
       error: fieldError,
       touched: fieldTouched,
       dirty: fieldDirty,
-    };
-
-    // Enhanced field state with handlers
-    const enhancedFieldState = {
-      ...fieldState,
       onChange: handleChange,
       onBlur: handleBlur,
     };
@@ -362,7 +399,7 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
           </label>
         )}
 
-        {children(enhancedFieldState)}
+        {children(fieldState)}
 
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
