@@ -6,16 +6,16 @@
 import { type Session, type User } from 'next-auth';
 
 // 拡張されたユーザー情報型
-export interface AuthUser extends User {
+export interface AuthUser extends Omit<User, 'name' | 'email' | 'image'> {
   id: string; // 必須のUUID
   email: string; // 必須のメールアドレス
-  name?: string | null;
-  image?: string | null;
+  name: string | null; // NextAuthのUserと一致させる
+  image: string | null; // NextAuthのUserと一致させる
   // Supabase auth_usersからの追加情報
-  google_id?: string;
-  email_verified?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  google_id: string;
+  email_verified: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 // 認証エラーの型
@@ -119,8 +119,8 @@ export interface UseAuthReturn extends AuthContextValue {
   // 便利な計算プロパティ
   userId: string | undefined;
   userEmail: string | undefined;
-  userName: string | undefined;
-  userImage: string | undefined;
+  userName: string | null | undefined;
+  userImage: string | null | undefined;
 
   // 状態チェック関数
   isGuest: () => boolean;

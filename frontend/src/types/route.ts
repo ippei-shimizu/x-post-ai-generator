@@ -56,13 +56,13 @@ export interface RouteProtectionState {
 
   // エラー状態
   hasError: boolean;
-  errorCode?: string;
-  errorMessage?: string;
+  errorCode?: string | undefined;
+  errorMessage?: string | undefined;
 
   // アクセス許可
   isAccessAllowed: boolean;
   redirectRequired: boolean;
-  redirectTarget?: string;
+  redirectTarget?: string | undefined;
 }
 
 // Next.js App Router対応の型

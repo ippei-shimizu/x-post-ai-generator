@@ -75,11 +75,13 @@ export interface InputProps
   type?: InputType;
   size?: InputSize;
   error?: boolean;
-  helperText?: string;
+  helperText?: string | undefined;
   leftElement?: ReactNode;
   rightElement?: ReactNode;
   sanitize?: boolean; // XSS対策用サニタイズフラグ
   debounce?: number; // デバウンス時間（ミリ秒）
+  label?: string; // アクセシビリティ向上のためのラベル
+  description?: string; // フィールドの説明
 }
 
 // ========================================
@@ -98,6 +100,14 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
   padding?: 'none' | 'sm' | 'default' | 'lg';
   interactive?: boolean;
+  semanticRole?:
+    | 'article'
+    | 'region'
+    | 'section'
+    | 'listitem'
+    | 'button'
+    | 'none'; // セマンティックrole推奨
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6; // CardHeader用見出しレベル
 }
 
 /**
@@ -107,6 +117,7 @@ export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   description?: string;
   action?: ReactNode;
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6; // 見出しレベル（アクセシビリティ向上）
 }
 
 /**
@@ -130,9 +141,11 @@ export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
  */
 export interface FormFieldState {
   value: unknown;
-  error?: string;
+  error?: string | undefined;
   touched?: boolean;
   dirty?: boolean;
+  onChange: (value: unknown) => void;
+  onBlur: () => void;
 }
 
 /**
@@ -143,7 +156,7 @@ export interface ValidationRule {
   minLength?: { value: number; message: string };
   maxLength?: { value: number; message: string };
   pattern?: { value: RegExp; message: string };
-  validate?: (value: unknown) => string | boolean | Promise<string | boolean>;
+  validate?: (value: unknown, formData?: Record<string, unknown>) => string | boolean | Promise<string | boolean>;
 }
 
 /**
@@ -161,10 +174,13 @@ export interface FormFieldProps {
 /**
  * フォームのProps
  */
-export interface FormProps extends HTMLAttributes<HTMLFormElement> {
+export interface FormProps extends Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'children'> {
   onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
   defaultValues?: Record<string, unknown>;
   mode?: 'onSubmit' | 'onBlur' | 'onChange' | 'all';
+  showErrorSummary?: boolean; // エラーサマリーの表示制御
+  errorSummaryTitle?: string; // エラーサマリーのタイトル
+  children?: ReactNode | ((context: { isSubmitting: boolean; values: Record<string, unknown>; errors: Record<string, string> }) => ReactNode);
 }
 
 // ========================================
