@@ -34,9 +34,12 @@
       "Bash(pnpm remove:*)",
       "Bash(timeout 10s pnpm run storybook)",
       "Bash(gtimeout:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(sed:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }
