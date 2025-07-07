@@ -199,10 +199,10 @@ export function AuthProvider({
       email: user.email,
       name: user.name || null,
       image: user.image || null,
-      google_id: user.google_id,
-      email_verified: user.email_verified,
-      created_at: user.created_at,
-      updated_at: user.updated_at,
+      google_id: user.google_id || '',
+      email_verified: user.email_verified || false,
+      created_at: user.created_at || new Date().toISOString(),
+      updated_at: user.updated_at || new Date().toISOString(),
     };
   }, []);
 
@@ -318,7 +318,7 @@ export function AuthProvider({
       }
     } catch (error) {
       const authError =
-        error instanceof Error && 'code' in error
+        error instanceof Error && 'code' in error && 'timestamp' in error
           ? (error as AuthError)
           : createAuthError(
               AUTH_ERROR_CODES.MALFORMED_DATA,

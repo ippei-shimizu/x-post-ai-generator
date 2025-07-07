@@ -12,6 +12,7 @@ import type {
   ProtectedRouteProps,
   RouteProtectionState,
   RouteProtectionError,
+  RouteProtectionErrorCode,
 } from '../../types/route';
 
 // デフォルトローディングコンポーネント
@@ -133,7 +134,7 @@ export function ProtectedRoute({
   // エラー状態
   if (protectionState.hasError && auth.error) {
     const routeError: RouteProtectionError = {
-      code: auth.error.code || 'UNKNOWN_ERROR',
+      code: (auth.error.code as RouteProtectionErrorCode) || 'UNKNOWN_ERROR',
       message: auth.error.message || '認証エラーが発生しました',
       redirectTarget: redirectTo,
       retryable: true,

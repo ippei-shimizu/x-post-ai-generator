@@ -54,12 +54,12 @@ describe('Header Component (TDD Red Phase)', () => {
 
     // window.location をリセット
     delete (window as any).location;
-    window.location = { ...originalLocation };
+    (window as any).location = { ...originalLocation };
   });
 
   afterEach(() => {
     // テスト後にlocationを復元
-    window.location = originalLocation;
+    (window as any).location = originalLocation;
   });
 
   describe('基本レンダリング', () => {
