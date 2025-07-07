@@ -30,7 +30,11 @@
       "Bash(node:*)",
       "Bash(npm:*)",
       "Bash(nvm:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(timeout 10s pnpm run storybook)",
+      "Bash(gtimeout:*)",
+      "Bash(true)"
     ]
   },
   "enableAllProjectMcpServers": true,
