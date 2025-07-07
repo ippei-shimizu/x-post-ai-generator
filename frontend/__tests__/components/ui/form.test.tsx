@@ -101,7 +101,7 @@ describe('Form Component (TDD Red Phase)', () => {
           <FormField name="username">
             {({ value, onChange }) => (
               <input
-                value={value}
+                value={value as string}
                 onChange={e => onChange(e.target.value)}
                 data-testid="username-input"
               />
@@ -132,7 +132,7 @@ describe('Form Component (TDD Red Phase)', () => {
         >
           <FormField name="email">
             {({ value }) => (
-              <input value={value} data-testid="email-input" readOnly />
+              <input value={value as string} data-testid="email-input" readOnly />
             )}
           </FormField>
         </Form>
@@ -148,7 +148,7 @@ describe('Form Component (TDD Red Phase)', () => {
         <Form onSubmit={handleSubmit} defaultValues={{ name: 'John' }}>
           <FormField name="name" defaultValue="Jane">
             {({ value }) => (
-              <input value={value} data-testid="name-input" readOnly />
+              <input value={value as string} data-testid="name-input" readOnly />
             )}
           </FormField>
         </Form>
@@ -168,7 +168,7 @@ describe('Form Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="required-input"
                 />
@@ -198,7 +198,7 @@ describe('Form Component (TDD Red Phase)', () => {
             {({ value, onChange, onBlur, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   onBlur={onBlur}
                   data-testid="email-input"
@@ -229,7 +229,7 @@ describe('Form Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="username-input"
                 />
@@ -270,11 +270,11 @@ describe('Form Component (TDD Red Phase)', () => {
 
     it('should show loading state during async submission', async () => {
       const handleSubmit = jest.fn(
-        () => new Promise(resolve => setTimeout(resolve, 100))
+        () => new Promise<void>(resolve => setTimeout(resolve, 100))
       );
       render(
         <Form onSubmit={handleSubmit}>
-          {({ isSubmitting }) => (
+          {({ isSubmitting }: { isSubmitting: boolean }) => (
             <>
               <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Submit'}
@@ -312,7 +312,7 @@ describe('FormField Component (TDD Red Phase)', () => {
         <MockForm>
           <FormField name="test-field">
             {({ value }) => (
-              <input value={value} data-testid="test-input" readOnly />
+              <input value={value as string} data-testid="test-input" readOnly />
             )}
           </FormField>
         </MockForm>
@@ -326,7 +326,7 @@ describe('FormField Component (TDD Red Phase)', () => {
         <MockForm>
           <FormField name="username" label="Username">
             {({ value }) => (
-              <input value={value} data-testid="username-input" readOnly />
+              <input value={value as string} data-testid="username-input" readOnly />
             )}
           </FormField>
         </MockForm>
@@ -343,7 +343,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             description="Must be at least 8 characters"
           >
             {({ value }) => (
-              <input value={value} data-testid="password-input" readOnly />
+              <input value={value as string} data-testid="password-input" readOnly />
             )}
           </FormField>
         </MockForm>
@@ -362,7 +362,7 @@ describe('FormField Component (TDD Red Phase)', () => {
           <FormField name="name">
             {({ value, onChange }) => (
               <input
-                value={value}
+                value={value as string}
                 onChange={e => onChange(e.target.value)}
                 data-testid="name-input"
               />
@@ -384,7 +384,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, onBlur, touched }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   onBlur={onBlur}
                   data-testid="email-input"
@@ -414,7 +414,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, dirty }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="bio-input"
                 />
@@ -448,7 +448,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="required-input"
                 />
@@ -480,7 +480,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="username-input"
                 />
@@ -515,7 +515,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="bio-input"
                 />
@@ -553,7 +553,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="email-input"
                 />
@@ -579,7 +579,7 @@ describe('FormField Component (TDD Red Phase)', () => {
     });
 
     it('should validate with custom function', async () => {
-      const customValidator = (value: string) => {
+      const customValidator = (value: unknown) => {
         return value === 'forbidden' ? 'This value is not allowed' : true;
       };
 
@@ -589,7 +589,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="custom-input"
                 />
@@ -615,7 +615,7 @@ describe('FormField Component (TDD Red Phase)', () => {
     });
 
     it('should handle async validation', async () => {
-      const asyncValidator = async (value: string) => {
+      const asyncValidator = async (value: unknown) => {
         await new Promise(resolve => setTimeout(resolve, 50));
         return value === 'taken' ? 'Username already taken' : true;
       };
@@ -626,7 +626,7 @@ describe('FormField Component (TDD Red Phase)', () => {
             {({ value, onChange, error }) => (
               <div>
                 <input
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="username-input"
                 />
@@ -675,7 +675,7 @@ describe('FormField Component (TDD Red Phase)', () => {
               <div>
                 <input
                   type="password"
-                  value={value}
+                  value={value as string}
                   onChange={e => onChange(e.target.value)}
                   data-testid="password-input"
                 />
