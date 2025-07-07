@@ -19,7 +19,9 @@
       "Bash(mkdir:*)",
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(npm run build:*)",
+      "Bash(grep:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
