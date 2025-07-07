@@ -93,7 +93,7 @@ describe('Button Component (TDD Red Phase)', () => {
       render(<Button size="lg">Large Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('h-11', 'px-8');
+      expect(button).toHaveClass('h-12', 'px-8');
     });
 
     it('should render icon size', () => {

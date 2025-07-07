@@ -133,13 +133,6 @@ describe('Header Component (TDD Red Phase)', () => {
         status: 'unauthenticated',
       });
 
-      // window.location.href をスパイ
-      const hrefSetter = jest.fn();
-      Object.defineProperty(window.location, 'href', {
-        set: hrefSetter,
-        configurable: true,
-      });
-
       render(
         <SessionProvider session={null}>
           <AuthProvider>
@@ -149,9 +142,10 @@ describe('Header Component (TDD Red Phase)', () => {
       );
 
       const loginButton = screen.getByTestId('login-button');
-      fireEvent.click(loginButton);
-
-      expect(hrefSetter).toHaveBeenCalledWith('/auth/signin');
+      
+      // Linkコンポーネントなので、親のaタグのhref属性をチェック
+      const loginLink = loginButton.closest('a');
+      expect(loginLink).toHaveAttribute('href', '/auth/signin');
     });
 
     it('should show loading state during authentication check', () => {

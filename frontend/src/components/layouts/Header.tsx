@@ -70,11 +70,6 @@ export function Header({
     signOut({ callbackUrl: '/' });
   };
 
-  const handleLogin = () => {
-    // カスタムサインインページに遷移
-    window.location.href = '/auth/signin';
-  };
-
   // モバイルメニューの処理
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -244,13 +239,14 @@ export function Header({
               </>
             ) : (
               /* ログインボタン */
-              <button
-                data-testid="login-button"
-                onClick={handleLogin}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-              >
-                ログイン
-              </button>
+              <Link href="/auth/signin">
+                <button
+                  data-testid="login-button"
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                >
+                  ログイン
+                </button>
+              </Link>
             )}
           </div>
         </div>

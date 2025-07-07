@@ -27,6 +27,7 @@ const config = {
         primary: {
           DEFAULT: 'var(--primary)',
           foreground: 'var(--primary-foreground)',
+          hover: 'var(--primary-hover)',
         },
         secondary: {
           DEFAULT: 'var(--secondary)',
@@ -51,6 +52,19 @@ const config = {
         card: {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
+        },
+        success: {
+          DEFAULT: 'var(--success)',
+          foreground: 'var(--success-foreground)',
+        },
+        warning: {
+          DEFAULT: 'var(--warning)',
+          foreground: 'var(--warning-foreground)',
+        },
+        gradient: {
+          start: 'var(--gradient-start)',
+          end: 'var(--gradient-end)',
+          accent: 'var(--gradient-accent)',
         },
       },
       borderRadius: {
@@ -94,6 +108,24 @@ const config = {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': {
+            opacity: '1',
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
+          },
+          '50%': {
+            opacity: '0.8',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)',
+          },
+        },
+        'gradient-shift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -104,6 +136,12 @@ const config = {
         'slide-in-from-bottom': 'slide-in-from-bottom 0.2s ease-out',
         'slide-in-from-left': 'slide-in-from-left 0.2s ease-out',
         'slide-in-from-right': 'slide-in-from-right 0.2s ease-out',
+        float: 'float 3s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'gradient-shift': 'gradient-shift 3s ease-in-out infinite',
+      },
+      backdropBlur: {
+        xs: '2px',
       },
     },
   },

@@ -1,49 +1,95 @@
 @import 'tailwindcss';
 
-/* Base CSS variables for design system */
+/* Modern Design System Variables */
 :root {
+  /* Core Colors - Tech-inspired palette */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 240 9% 9%;
+
+  /* Primary - Modern blue gradient */
+  --primary: 216 100% 50%;
   --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  --primary-hover: 216 100% 45%;
+
+  /* Secondary - Purple accent */
+  --secondary: 270 95% 95%;
+  --secondary-foreground: 270 10% 15%;
+
+  /* Accent - Violet for highlights */
+  --accent: 270 95% 95%;
+  --accent-foreground: 270 10% 15%;
+
+  /* Muted - Subtle grays */
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+
+  /* UI Elements */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 10% 3.9%;
-  --radius: 0.5rem;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 216 100% 50%;
+  --radius: 0.75rem;
+
+  /* Gradient Colors */
+  --gradient-start: 216 100% 50%;
+  --gradient-end: 270 100% 60%;
+  --gradient-accent: 280 100% 70%;
+
+  /* Success & Warning */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 98%;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
+  /* Dark Mode - Tech-inspired */
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 213 31% 91%;
+
+  /* Primary - Bright blue for dark mode */
+  --primary: 216 100% 60%;
+  --primary-foreground: 224 71% 4%;
+  --primary-hover: 216 100% 65%;
+
+  /* Secondary - Dark purple */
+  --secondary: 222 84% 5%;
+  --secondary-foreground: 213 31% 91%;
+
+  /* Accent - Subtle violet */
+  --accent: 222 84% 5%;
+  --accent-foreground: 213 31% 91%;
+
+  /* Muted - Dark grays */
+  --muted: 223 47% 11%;
+  --muted-foreground: 215 20% 65%;
+
+  /* UI Elements */
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 213 31% 91%;
+  --border: 223 47% 11%;
+  --input: 223 47% 11%;
+  --ring: 216 100% 60%;
+
+  /* Gradient Colors for dark mode */
+  --gradient-start: 216 100% 60%;
+  --gradient-end: 270 100% 70%;
+  --gradient-accent: 280 100% 80%;
+
+  /* Success & Warning for dark mode */
+  --success: 142 76% 46%;
+  --success-foreground: 224 71% 4%;
+  --warning: 38 92% 60%;
+  --warning-foreground: 224 71% 4%;
 }
 
 /* Base styles */
@@ -68,4 +114,105 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* Modern Gradient Utilities */
+.bg-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-start)),
+    hsl(var(--gradient-end))
+  );
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-end)),
+    hsl(var(--gradient-accent))
+  );
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--accent)));
+}
+
+/* Text gradients */
+.text-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-start)),
+    hsl(var(--gradient-end))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-end)),
+    hsl(var(--gradient-accent))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Modern box shadows */
+.shadow-modern {
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.shadow-modern-lg {
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.shadow-modern-xl {
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Glass morphism effect */
+.bg-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .bg-glass {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Modern hover effects */
+.hover-lift {
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.15),
+    0 8px 10px -6px rgb(0 0 0 / 0.15);
+}
+
+/* Improved focus styles */
+.focus-modern:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Typography enhancements */
+.text-balance {
+  text-wrap: balance;
 }
