@@ -229,7 +229,8 @@ export interface BaseUIProps extends AriaProps {
 /**
  * shadcn/uiのcvaバリアント型のヘルパー
  */
-export type UIVariantProps<T extends (...args: unknown[]) => unknown> = VariantProps<T>;
+export type UIVariantProps<T extends (...args: unknown[]) => unknown> =
+  VariantProps<T>;
 
 /**
  * コンポーネントのrefを含むProps型
