@@ -34,15 +34,21 @@ jest.mock('@/components/ui/textarea', () => ({
 }));
 
 jest.mock('@/components/ui/input', () => ({
-  Input: ({ leftElement, rightElement, error, helperText, ...restProps }: any) => {
+  Input: ({
+    leftElement,
+    rightElement,
+    error,
+    helperText,
+    ...restProps
+  }: any) => {
     // Exclude non-DOM props before spreading
     const { required, size, leftIcon, rightIcon, ...domProps } = restProps;
-    
+
     return (
       <div>
         {leftElement}
-        <input 
-          {...domProps} 
+        <input
+          {...domProps}
           id={`mock-${restProps.name || 'input'}`}
           name={restProps.name}
           role="textbox"
@@ -57,7 +63,14 @@ jest.mock('@/components/ui/input', () => ({
 }));
 
 jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, loading, loadingText, leftIcon, rightIcon, ...props }: any) => (
+  Button: ({
+    children,
+    loading,
+    loadingText,
+    leftIcon,
+    rightIcon,
+    ...props
+  }: any) => (
     <button {...props}>
       {loading && <span data-testid="button-spinner">Loading...</span>}
       {leftIcon}
@@ -83,7 +96,14 @@ jest.mock('@/components/ui/card', () => ({
       {children}
     </div>
   ),
-  CardHeader: ({ children, className, title, description, headingLevel, ...props }: any) => {
+  CardHeader: ({
+    children,
+    className,
+    title,
+    description,
+    headingLevel,
+    ...props
+  }: any) => {
     const { headingLevel: _, ...domProps } = props;
     return (
       <div className={className} {...domProps}>
@@ -113,7 +133,7 @@ jest.mock('@/components/ui/form', () => ({
         }
       });
     }
-    
+
     return (
       <form
         role="form"
@@ -130,7 +150,7 @@ jest.mock('@/components/ui/form', () => ({
   FormField: ({ children, name, label, description, rules }: any) => {
     const [value, setValue] = React.useState(formContextValues.get(name) || '');
     const [error, setError] = React.useState<string | undefined>();
-    
+
     // Simple validation on blur
     const validateField = (val: any) => {
       if (rules?.required && !val) {
@@ -154,7 +174,7 @@ jest.mock('@/components/ui/form', () => ({
       }
       setError(undefined);
     };
-    
+
     const mockState = {
       value,
       onChange: (newValue: any) => {
@@ -167,29 +187,33 @@ jest.mock('@/components/ui/form', () => ({
       },
       error,
     };
-    
+
     // childrenが関数の場合は呼び出し、そうでなければそのまま返す
-    const fieldContent = typeof children === 'function' ? children(mockState) : children;
-    
+    const fieldContent =
+      typeof children === 'function' ? children(mockState) : children;
+
     // Clone and inject props into input elements
-    const processedFieldContent = React.isValidElement(fieldContent) ? 
-      React.cloneElement(fieldContent as React.ReactElement<any>, {
-        name,
-        value: mockState.value,
-        onChange: (e: any) => mockState.onChange(e.target ? e.target.value : e),
-        onBlur: mockState.onBlur,
-        error: !!error,
-        helperText: error,
-        'aria-describedby': description ? `${name}-description` : undefined,
-      } as any) : fieldContent;
-    
+    const processedFieldContent = React.isValidElement(fieldContent)
+      ? React.cloneElement(
+          fieldContent as React.ReactElement<any>,
+          {
+            name,
+            value: mockState.value,
+            onChange: (e: any) =>
+              mockState.onChange(e.target ? e.target.value : e),
+            onBlur: mockState.onBlur,
+            error: !!error,
+            helperText: error,
+            'aria-describedby': description ? `${name}-description` : undefined,
+          } as any
+        )
+      : fieldContent;
+
     return (
       <div data-field-name={name}>
         {label && <label htmlFor={`mock-${name}`}>{label}</label>}
         {description && <small id={`${name}-description`}>{description}</small>}
-        <div data-field-content="true">
-          {processedFieldContent}
-        </div>
+        <div data-field-content="true">{processedFieldContent}</div>
         {error && <span role="alert">{error}</span>}
       </div>
     );
@@ -261,7 +285,7 @@ describe('ContentSourcesForm', () => {
       // ソースタイプは独自のラベル構造
       expect(screen.getByText('ソースタイプ')).toBeInTheDocument();
       expect(screen.getByRole('combobox')).toBeInTheDocument();
-      
+
       // FormFieldで生成されるラベル
       expect(screen.getByText('ソース名')).toBeInTheDocument();
       expect(screen.getByText('URL')).toBeInTheDocument();

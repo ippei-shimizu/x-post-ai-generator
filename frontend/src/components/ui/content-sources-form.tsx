@@ -12,15 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from './select';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from './card';
+import { Card, CardContent, CardHeader } from './card';
 import { Form, FormField } from './form';
 import { Badge } from './badge';
 import { Icons } from './icons';
-import type { ContentSourceInsert, ContentSourceType } from '@/types/content-sources';
+import type {
+  ContentSourceInsert,
+  ContentSourceType,
+} from '@/types/content-sources';
 
 /**
  * フォーム送信用のデータ型（user_idは除外）
@@ -29,7 +28,7 @@ interface FormSubmitData {
   name: string;
   source_type: ContentSourceType;
   url: string;
-  config?: any;
+  config?: Record<string, unknown>;
   is_active: boolean;
 }
 
@@ -135,10 +134,13 @@ export const ContentSourcesForm = React.forwardRef<
 
     // 設定値の更新
     const handleConfigChange = (key: string, value: string) => {
-      setConfig(prev => ({
-        ...prev,
-        [key]: value,
-      } as any));
+      setConfig(
+        prev =>
+          ({
+            ...prev,
+            [key]: value,
+          }) as Record<string, unknown>
+      );
     };
 
     // フォーム送信の処理
@@ -149,7 +151,7 @@ export const ContentSourcesForm = React.forwardRef<
         name: String(values.name),
         source_type: sourceType,
         url: String(values.url),
-        config: config,
+        config: config as Record<string, unknown>,
         is_active: true,
       };
 
@@ -350,7 +352,11 @@ export const ContentSourcesForm = React.forwardRef<
                           <Input
                             type="text"
                             placeholder={`${field}を入力`}
-                            value={(config as any)[field] || ''}
+                            value={
+                              ((config as Record<string, unknown>)[
+                                field
+                              ] as string) || ''
+                            }
                             onChange={e =>
                               handleConfigChange(field, e.target.value)
                             }

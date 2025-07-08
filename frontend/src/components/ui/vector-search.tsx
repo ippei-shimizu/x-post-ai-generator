@@ -171,7 +171,9 @@ export const VectorSearch = React.forwardRef<HTMLDivElement, VectorSearchProps>(
         query_vector: [], // 実際の実装ではクエリをベクトル化
         similarity_threshold: filters?.similarityThreshold || 0.7,
         match_count: filters?.maxResults || 10,
-        source_type: filters?.sourceTypes?.[0] as any,
+        ...(filters?.sourceTypes?.[0]
+          ? { source_type: filters.sourceTypes[0] as 'github' }
+          : {}),
         active_only: true,
       };
 
