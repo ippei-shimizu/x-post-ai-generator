@@ -6,39 +6,45 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-electric disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-modern hover:bg-primary-hover hover:shadow-modern-lg transform hover:scale-[1.02] active:scale-[0.98]',
+          'bg-gradient-primary text-primary-foreground shadow-ultra hover-levitate rounded-2xl border border-white/10',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-modern hover:bg-destructive/90 hover:shadow-modern-lg',
+          'bg-destructive text-destructive-foreground shadow-electric hover-electric rounded-2xl',
         outline:
-          'border border-input bg-background shadow-modern hover:bg-accent hover:text-accent-foreground hover:shadow-modern-lg',
+          'glass-ultra border border-white/20 text-foreground hover-glow rounded-2xl',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-modern hover:bg-secondary/80 hover:shadow-modern-lg',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'bg-gradient-dark text-secondary-foreground shadow-deep hover-levitate rounded-2xl border border-white/5',
+        ghost: 'hover:glass-neon hover:text-accent-foreground rounded-2xl',
+        link: 'text-gradient-primary underline-offset-4 hover:underline hover:text-glow',
         gradient:
-          'bg-gradient-primary text-white shadow-modern hover:shadow-modern-lg transform hover:scale-[1.02] active:scale-[0.98] bg-size-200 animate-gradient-shift',
+          'bg-gradient-neon text-white shadow-neon hover-levitate animate-gradient-flow rounded-2xl border border-white/20',
         'gradient-outline':
-          'border-2 border-transparent bg-gradient-primary bg-clip-border text-transparent bg-clip-text hover:bg-clip-padding hover:text-white transition-all duration-300',
+          'glass-ultra border-2 border-white/30 text-gradient-electric hover-glow rounded-2xl',
+        neon: 'bg-gradient-glow text-primary-foreground shadow-electric animate-pulse-electric rounded-2xl border border-white/20',
+        electric:
+          'bg-gradient-accent text-primary-foreground shadow-neon hover-electric animate-shimmer rounded-2xl',
+        ultra:
+          'bg-gradient-neon text-white shadow-neon hover-levitate animate-float-glow rounded-3xl border border-white/30',
         success:
-          'bg-success text-success-foreground shadow-modern hover:bg-success/90 hover:shadow-modern-lg',
+          'bg-success text-success-foreground shadow-electric hover-electric rounded-2xl',
         warning:
-          'bg-warning text-warning-foreground shadow-modern hover:bg-warning/90 hover:shadow-modern-lg',
+          'bg-warning text-warning-foreground shadow-electric hover-electric rounded-2xl',
         glass:
-          'bg-glass text-foreground backdrop-blur-sm border border-white/20 hover:bg-white/20 shadow-modern',
+          'glass-ultra text-foreground hover-glow rounded-2xl border border-white/10',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3 text-xs',
-        lg: 'h-12 rounded-lg px-8 text-base',
-        xl: 'h-14 rounded-lg px-10 text-lg',
-        icon: 'h-10 w-10',
-        'icon-sm': 'h-8 w-8 text-xs',
-        'icon-lg': 'h-12 w-12 text-base',
+        default: 'h-12 px-6 py-3 text-sm',
+        sm: 'h-9 px-4 py-2 text-xs rounded-xl',
+        lg: 'h-14 px-10 py-4 text-base rounded-2xl',
+        xl: 'h-16 px-12 py-5 text-lg rounded-3xl',
+        icon: 'h-12 w-12 rounded-2xl',
+        'icon-sm': 'h-9 w-9 text-xs rounded-xl',
+        'icon-lg': 'h-14 w-14 text-base rounded-2xl',
+        'icon-xl': 'h-16 w-16 text-lg rounded-3xl',
       },
     },
     defaultVariants: {

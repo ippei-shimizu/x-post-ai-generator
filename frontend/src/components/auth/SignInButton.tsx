@@ -18,10 +18,21 @@ interface SignInButtonProps {
     | 'link'
     | 'gradient'
     | 'gradient-outline'
+    | 'neon'
+    | 'electric'
+    | 'ultra'
     | 'success'
     | 'warning'
     | 'glass';
-  size?: 'default' | 'sm' | 'lg' | 'xl' | 'icon' | 'icon-sm' | 'icon-lg';
+  size?:
+    | 'default'
+    | 'sm'
+    | 'lg'
+    | 'xl'
+    | 'icon'
+    | 'icon-sm'
+    | 'icon-lg'
+    | 'icon-xl';
 }
 
 export function SignInButton({

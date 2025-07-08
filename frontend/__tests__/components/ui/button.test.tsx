@@ -32,7 +32,10 @@ describe('Button Component (TDD Red Phase)', () => {
       render(<Button variant="default">Default Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-primary', 'text-primary-foreground');
+      expect(button).toHaveClass(
+        'bg-gradient-primary',
+        'text-primary-foreground'
+      );
     });
 
     it('should render destructive variant', () => {
@@ -49,28 +52,31 @@ describe('Button Component (TDD Red Phase)', () => {
       render(<Button variant="outline">Outline Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('border', 'border-input');
+      expect(button).toHaveClass('glass-ultra', 'border');
     });
 
     it('should render secondary variant', () => {
       render(<Button variant="secondary">Secondary Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-secondary', 'text-secondary-foreground');
+      expect(button).toHaveClass(
+        'bg-gradient-dark',
+        'text-secondary-foreground'
+      );
     });
 
     it('should render ghost variant', () => {
       render(<Button variant="ghost">Ghost Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('hover:bg-accent');
+      expect(button).toHaveClass('hover:glass-neon');
     });
 
     it('should render link variant', () => {
       render(<Button variant="link">Link Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('text-primary', 'underline-offset-4');
+      expect(button).toHaveClass('text-gradient-primary', 'underline-offset-4');
     });
   });
 
@@ -79,21 +85,21 @@ describe('Button Component (TDD Red Phase)', () => {
       render(<Button size="default">Default Size</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('h-10', 'px-4', 'py-2');
+      expect(button).toHaveClass('h-12', 'px-6', 'py-3');
     });
 
     it('should render small size', () => {
       render(<Button size="sm">Small Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('h-9', 'px-3');
+      expect(button).toHaveClass('h-9', 'px-4');
     });
 
     it('should render large size', () => {
       render(<Button size="lg">Large Button</Button>);
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('h-12', 'px-8');
+      expect(button).toHaveClass('h-14', 'px-10');
     });
 
     it('should render icon size', () => {
@@ -104,7 +110,7 @@ describe('Button Component (TDD Red Phase)', () => {
       );
 
       const button = screen.getByRole('button', { name: 'Settings' });
-      expect(button).toHaveClass('h-10', 'w-10');
+      expect(button).toHaveClass('h-12', 'w-12');
     });
   });
 

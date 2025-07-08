@@ -1,5 +1,5 @@
 /**
- * Header - アプリケーションヘッダーコンポーネント
+ * Ultra Modern Header - 革新的ヘッダーコンポーネント
  * ナビゲーション・ユーザーメニュー・レスポンシブ対応
  */
 
@@ -10,6 +10,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
+import { Bot, Menu, X, User, Settings, LogOut, Sparkles } from 'lucide-react';
 import type { HeaderProps, NavigationItem } from '../../types/layout';
 import { DEFAULT_NAVIGATION_ITEMS } from '../../types/layout';
 
@@ -42,16 +43,23 @@ export function Header({
     return (
       <header
         data-testid="app-header"
-        className={`border-b border-gray-200 bg-white ${className}`}
+        className={`glass-ultra relative border-b border-white/10 ${className}`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
+          <div className="flex h-20 items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-gradient-neon shadow-neon flex h-12 w-12 animate-pulse-electric items-center justify-center rounded-2xl border border-white/20">
+                <Bot className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-gradient-electric text-2xl font-bold">
                 X-Post AI Generator
               </h1>
             </div>
-            <div data-testid="auth-loading" className="text-sm text-gray-500">
+            <div
+              data-testid="auth-loading"
+              className="flex items-center gap-2 text-sm text-muted-foreground"
+            >
+              <div className="bg-gradient-primary h-2 w-2 animate-pulse-electric rounded-full"></div>
               認証状況を確認中...
             </div>
           </div>
@@ -79,48 +87,57 @@ export function Header({
   return (
     <header
       data-testid="app-header"
-      className={`border-b border-gray-200 bg-white ${className}`}
+      className={`glass-ultra backdrop-blur-20 relative z-50 border-b border-white/10 ${className}`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* ロゴ・アプリ名 */}
+      {/* Background glow effect */}
+      <div className="bg-gradient-primary absolute inset-0 opacity-5"></div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          {/* Ultra ロゴ・アプリ名 */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <h1 className="text-xl font-semibold text-gray-900">
+            <Link href="/" className="group flex items-center gap-4">
+              <div className="bg-gradient-neon shadow-neon flex h-12 w-12 animate-pulse-electric items-center justify-center rounded-2xl border border-white/20 transition-transform duration-300 group-hover:scale-110">
+                <Bot className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-gradient-electric text-2xl font-bold group-hover:animate-shimmer">
                 X-Post AI Generator
               </h1>
             </Link>
           </div>
 
-          {/* デスクトップナビゲーション */}
+          {/* Ultra デスクトップナビゲーション */}
           {isAuthenticated && (
             <nav
               data-testid="main-navigation"
               role="navigation"
               aria-label="メインナビゲーション"
-              className="hidden space-x-8 md:flex"
+              className="hidden space-x-2 md:flex"
             >
               {navigationItems.map(item => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`group relative rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 ${
                     item.isActive
-                      ? 'active bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'glass-neon text-gradient-primary shadow-electric border border-white/20'
+                      : 'text-foreground/80 hover:text-gradient-electric hover-glow'
                   }`}
                 >
-                  {item.label}
+                  {item.isActive && (
+                    <div className="bg-gradient-primary absolute inset-0 rounded-2xl opacity-10"></div>
+                  )}
+                  <span className="relative">{item.label}</span>
                 </Link>
               ))}
             </nav>
           )}
 
-          {/* 右側メニュー */}
+          {/* Ultra 右側メニュー */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                {/* ユーザーアイコン（ログインボタンの代替） */}
+                {/* Ultra ユーザーアバター */}
                 <div className="relative">
                   <button
                     data-testid="user-avatar"
@@ -132,15 +149,15 @@ export function Header({
                         handleUserMenuToggle();
                       }
                     }}
-                    className="flex items-center space-x-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 transition-colors hover:bg-blue-100"
+                    className="glass-ultra hover-glow group flex items-center gap-3 rounded-2xl border border-white/20 px-4 py-3 transition-all duration-300"
                   >
                     {user?.image ? (
                       <Image
                         src={user.image}
                         alt={user.name || 'ユーザー'}
-                        width={28}
-                        height={28}
-                        className="rounded-full"
+                        width={32}
+                        height={32}
+                        className="rounded-full border-2 border-white/20"
                         onError={e => {
                           console.error(
                             'Failed to load user image:',
@@ -151,100 +168,109 @@ export function Header({
                         }}
                       />
                     ) : (
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600">
-                        <span className="text-sm font-medium text-white">
+                      <div className="bg-gradient-primary shadow-electric flex h-8 w-8 items-center justify-center rounded-full border border-white/20">
+                        <span className="text-sm font-bold text-white">
                           {user?.name?.charAt(0) || '?'}
                         </span>
                       </div>
                     )}
-                    <span className="hidden text-sm font-medium text-blue-700 sm:block">
+                    <span className="group-hover:text-gradient-electric hidden text-sm font-semibold text-foreground transition-all duration-300 sm:block">
                       {user?.name || 'ユーザー'}
                     </span>
-                    <svg
-                      className="h-4 w-4 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    <div className="bg-gradient-primary h-2 w-2 animate-pulse-electric rounded-full"></div>
                   </button>
 
-                  {/* ユーザーメニュー */}
+                  {/* Ultra ユーザーメニュー */}
                   {isUserMenuOpen && (
                     <div
                       data-testid="user-menu"
-                      className="absolute right-0 z-50 mt-2 w-64 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+                      className="glass-ultra shadow-neon absolute right-0 z-50 mt-4 w-72 animate-fade-in rounded-3xl border border-white/20 py-2"
                     >
-                      <div className="border-b border-gray-100 px-4 py-2 text-sm text-gray-700">
-                        <div className="font-medium">{user?.name}</div>
-                        <div className="text-gray-500">{user?.email}</div>
+                      <div className="border-b border-white/20 px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          {user?.image ? (
+                            <Image
+                              src={user.image}
+                              alt={user.name || 'ユーザー'}
+                              width={40}
+                              height={40}
+                              className="rounded-full border-2 border-white/20"
+                            />
+                          ) : (
+                            <div className="bg-gradient-primary shadow-electric flex h-10 w-10 items-center justify-center rounded-full border border-white/20">
+                              <span className="text-lg font-bold text-white">
+                                {user?.name?.charAt(0) || '?'}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <div className="text-gradient-primary text-base font-semibold">
+                              {user?.name}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {user?.email}
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        プロフィール
-                      </Link>
+                      <div className="py-2">
+                        <Link
+                          href="/profile"
+                          className="hover:glass-neon hover:text-gradient-electric group flex items-center gap-3 px-6 py-3 text-sm font-medium text-foreground transition-all duration-300"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <User className="group-hover:text-gradient-primary h-4 w-4 transition-all" />
+                          プロフィール
+                        </Link>
 
-                      <Link
-                        href="/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        設定
-                      </Link>
+                        <Link
+                          href="/settings"
+                          className="hover:glass-neon hover:text-gradient-electric group flex items-center gap-3 px-6 py-3 text-sm font-medium text-foreground transition-all duration-300"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <Settings className="group-hover:text-gradient-primary h-4 w-4 transition-all" />
+                          設定
+                        </Link>
 
-                      <hr className="my-1" />
+                        <div className="mx-4 my-2 border-t border-white/20"></div>
 
-                      <button
-                        data-testid="logout-button"
-                        onClick={handleLogout}
-                        className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
-                      >
-                        ログアウト
-                      </button>
+                        <button
+                          data-testid="logout-button"
+                          onClick={handleLogout}
+                          className="hover:glass-neon hover:bg-destructive/10 group flex w-full items-center gap-3 px-6 py-3 text-left text-sm font-medium text-destructive transition-all duration-300"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          ログアウト
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* モバイルメニューボタン */}
+                {/* Ultra モバイルメニューボタン */}
                 <button
                   data-testid="mobile-menu-toggle"
                   onClick={handleMobileMenuToggle}
-                  className="rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 md:hidden"
+                  className="glass-ultra hover-glow rounded-2xl border border-white/20 p-3 text-foreground md:hidden"
                   aria-label="モバイルメニューを開く"
                 >
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
+                  {isMobileMenuOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
                 </button>
               </>
             ) : (
-              /* ログインボタン */
+              /* Ultra ログインボタン */
               <Link href="/auth/signin">
                 <button
                   data-testid="login-button"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                  className="bg-gradient-neon shadow-neon hover-levitate group flex items-center gap-2 rounded-2xl border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all duration-300"
                 >
-                  ログイン
+                  <Sparkles className="h-4 w-4 transition-all group-hover:animate-pulse-electric" />
+                  <span className="text-glow">ログイン</span>
                 </button>
               </Link>
             )}
@@ -252,35 +278,41 @@ export function Header({
         </div>
       </div>
 
-      {/* モバイルナビゲーション */}
+      {/* Ultra モバイルナビゲーション */}
       {isAuthenticated && isMobileMenuOpen && (
         <div
           data-testid="mobile-navigation"
-          className="border-t border-gray-200 bg-white md:hidden"
+          className="glass-ultra animate-fade-in border-t border-white/20 md:hidden"
         >
-          <nav className="space-y-1 px-4 pb-3 pt-2">
-            {navigationItems.map(item => (
+          <nav className="space-y-2 px-6 pb-6 pt-4">
+            {navigationItems.map((item, index) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                className={`group block rounded-2xl px-4 py-4 text-base font-medium transition-all duration-300 ${
                   item.isActive
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'glass-neon text-gradient-primary shadow-electric border border-white/20'
+                    : 'text-foreground/80 hover:glass-neon hover:text-gradient-electric'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                {item.label}
+                <div className="flex items-center gap-3">
+                  <div className="bg-gradient-primary h-2 w-2 animate-pulse-electric rounded-full"></div>
+                  <span className="group-hover:text-glow transition-all duration-300">
+                    {item.label}
+                  </span>
+                </div>
               </Link>
             ))}
           </nav>
         </div>
       )}
 
-      {/* オーバーレイ（メニューが開いている時） */}
+      {/* Ultra オーバーレイ（メニューが開いている時） */}
       {(isUserMenuOpen || isMobileMenuOpen) && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-25"
+          className="fixed inset-0 z-40 animate-fade-in bg-black/50 backdrop-blur-sm"
           onClick={() => {
             setIsUserMenuOpen(false);
             setIsMobileMenuOpen(false);

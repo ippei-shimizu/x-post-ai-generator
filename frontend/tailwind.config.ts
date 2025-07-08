@@ -61,11 +61,12 @@ const config = {
           DEFAULT: 'var(--warning)',
           foreground: 'var(--warning-foreground)',
         },
-        gradient: {
-          start: 'var(--gradient-start)',
-          end: 'var(--gradient-end)',
-          accent: 'var(--gradient-accent)',
+        glow: {
+          primary: 'var(--glow-primary)',
+          secondary: 'var(--glow-secondary)',
+          accent: 'var(--glow-accent)',
         },
+        shadow: 'var(--shadow-color)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -126,6 +127,59 @@ const config = {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
         },
+        'gradient-flow': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        'neon-flow': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '25%': { backgroundPosition: '100% 0%' },
+          '50%': { backgroundPosition: '100% 100%' },
+          '75%': { backgroundPosition: '0% 100%' },
+        },
+        'electric-pulse': {
+          '0%, 100%': {
+            backgroundPosition: '0% 50%',
+            filter: 'brightness(1)',
+          },
+          '50%': {
+            backgroundPosition: '100% 50%',
+            filter: 'brightness(1.2)',
+          },
+        },
+        'float-glow': {
+          '0%, 100%': {
+            transform: 'translateY(0px)',
+            filter: 'drop-shadow(0 0 10px hsl(var(--glow-primary)))',
+          },
+          '50%': {
+            transform: 'translateY(-20px)',
+            filter: 'drop-shadow(0 0 20px hsl(var(--glow-primary)))',
+          },
+        },
+        'pulse-electric': {
+          '0%, 100%': { boxShadow: '0 0 5px hsl(var(--glow-accent))' },
+          '50%': {
+            boxShadow:
+              '0 0 20px hsl(var(--glow-accent)), 0 0 30px hsl(var(--glow-accent))',
+          },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-1000px 0' },
+          '100%': { backgroundPosition: '1000px 0' },
+        },
+        'text-glow-pulse': {
+          '0%, 100%': {
+            textShadow:
+              '0 0 10px hsl(var(--glow-primary)), 0 0 20px hsl(var(--glow-primary))',
+            transform: 'scale(1)',
+          },
+          '50%': {
+            textShadow:
+              '0 0 20px hsl(var(--glow-primary)), 0 0 30px hsl(var(--glow-primary)), 0 0 40px hsl(var(--glow-primary))',
+            transform: 'scale(1.02)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -139,6 +193,13 @@ const config = {
         float: 'float 3s ease-in-out infinite',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 3s ease-in-out infinite',
+        'gradient-flow': 'gradient-flow 8s ease-in-out infinite',
+        'neon-flow': 'neon-flow 3s ease-in-out infinite',
+        'electric-pulse': 'electric-pulse 2s ease-in-out infinite',
+        'float-glow': 'float-glow 4s ease-in-out infinite',
+        'pulse-electric': 'pulse-electric 2s ease-in-out infinite',
+        shimmer: 'shimmer 2s infinite',
+        'text-glow': 'text-glow-pulse 3s ease-in-out infinite',
       },
       backdropBlur: {
         xs: '2px',

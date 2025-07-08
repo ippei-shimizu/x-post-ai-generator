@@ -142,7 +142,7 @@ describe('Header Component (TDD Red Phase)', () => {
       );
 
       const loginButton = screen.getByTestId('login-button');
-      
+
       // Linkコンポーネントなので、親のaタグのhref属性をチェック
       const loginLink = loginButton.closest('a');
       expect(loginLink).toHaveAttribute('href', '/auth/signin');
@@ -188,7 +188,7 @@ describe('Header Component (TDD Red Phase)', () => {
     });
 
     it('should highlight current page in navigation', () => {
-      // Red Phase: アクティブページのハイライトが実装されていないので失敗
+      // アクティブページのハイライト確認
       render(
         <SessionProvider session={TEST_SESSION}>
           <AuthProvider>
@@ -200,7 +200,7 @@ describe('Header Component (TDD Red Phase)', () => {
       const dashboardLink = screen.getByRole('link', {
         name: 'ダッシュボード',
       });
-      expect(dashboardLink).toHaveClass('active');
+      expect(dashboardLink).toHaveClass('glass-neon', 'text-gradient-primary');
     });
   });
 
