@@ -14,6 +14,11 @@ const cardVariants = cva('rounded-lg transition-colors', {
       default: 'border bg-card text-card-foreground shadow-sm',
       outline: 'border-2 border-border bg-background',
       ghost: 'border-transparent shadow-none bg-transparent',
+      glass:
+        'glass-ultra text-foreground hover-glow rounded-2xl border border-white/10',
+      neon: 'bg-gradient-glow text-primary-foreground shadow-electric animate-pulse-electric rounded-2xl border border-white/20',
+      ultra:
+        'bg-gradient-neon text-white shadow-neon hover-levitate animate-float-glow rounded-3xl border border-white/30',
     },
     padding: {
       none: 'p-0',

@@ -24,12 +24,28 @@ export type ButtonVariant =
   | 'outline'
   | 'secondary'
   | 'ghost'
-  | 'link';
+  | 'link'
+  | 'gradient'
+  | 'gradient-outline'
+  | 'neon'
+  | 'electric'
+  | 'ultra'
+  | 'success'
+  | 'warning'
+  | 'glass';
 
 /**
  * ボタンのサイズ定義
  */
-export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
+export type ButtonSize =
+  | 'default'
+  | 'sm'
+  | 'lg'
+  | 'xl'
+  | 'icon'
+  | 'icon-sm'
+  | 'icon-lg'
+  | 'icon-xl';
 
 /**
  * ボタンコンポーネントのProps
@@ -91,7 +107,13 @@ export interface InputProps
 /**
  * カードのバリアント定義
  */
-export type CardVariant = 'default' | 'outline' | 'ghost';
+export type CardVariant =
+  | 'default'
+  | 'outline'
+  | 'ghost'
+  | 'glass'
+  | 'neon'
+  | 'ultra';
 
 /**
  * カードコンポーネントのProps

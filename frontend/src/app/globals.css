@@ -1,52 +1,75 @@
 @import 'tailwindcss';
 
-/* Base CSS variables for design system */
+/* Ultra Modern Dark Design System - The Ultimate Frontend Experience */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  /* Core Dark Foundation - Deep blacks with subtle warmth */
+  --background: 0 0% 4%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 6%;
+  --card-foreground: 0 0% 92%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 95%;
+
+  /* Primary - Electric blue gradient system */
+  --primary: 210 100% 80%;
+  --primary-foreground: 0 0% 8%;
+  --primary-hover: 220 100% 85%;
+
+  /* Secondary - Deep charcoal with subtle glow */
+  --secondary: 0 0% 12%;
+  --secondary-foreground: 0 0% 88%;
+
+  /* Accent - Neon blue highlights */
+  --accent: 0 0% 10%;
+  --accent-foreground: 210 100% 80%;
+
+  /* Muted - Sophisticated grays */
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 60%;
+
+  /* UI Elements */
+  --destructive: 0 100% 70%;
+  --destructive-foreground: 0 0% 95%;
+  --border: 0 0% 15%;
+  --input: 0 0% 12%;
+  --ring: 210 100% 80%;
+  --radius: 1rem;
+
+  /* Revolutionary Blue Gradient System */
+  --gradient-primary: 210 100% 60%, 240 100% 70%;
+  --gradient-secondary: 180 100% 50%, 210 100% 60%;
+  --gradient-accent: 240 100% 70%, 270 100% 80%;
+  --gradient-neon: 180 100% 50%, 210 100% 60%, 240 100% 70%;
+  --gradient-dark: 0 0% 0%, 0 0% 10%;
+  --gradient-glow: 210 100% 60%, 240 100% 70%, 270 100% 80%;
+
+  /* Special Effects Colors */
+  --glow-primary: 210 100% 60%;
+  --glow-secondary: 240 100% 70%;
+  --glow-accent: 270 100% 80%;
+  --shadow-color: 0 0% 0%;
+
+  /* Success & Warning with electric touch */
+  --success: 120 100% 50%;
+  --success-foreground: 0 0% 8%;
+  --warning: 45 100% 60%;
+  --warning-foreground: 0 0% 8%;
+}
+
+/* Dark mode is now the default - no separate dark class needed */
+.light {
+  /* Light mode as alternate (rarely used) */
+  --background: 0 0% 98%;
+  --foreground: 0 0% 5%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 240 9% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 10% 3.9%;
-  --radius: 0.5rem;
+  --card-foreground: 0 0% 8%;
+  --muted: 0 0% 94%;
+  --muted-foreground: 0 0% 40%;
+  --border: 0 0% 88%;
+  --input: 0 0% 90%;
 }
 
-.dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-}
-
-/* Base styles */
+/* Base styles with dark-first approach */
 * {
   border-color: hsl(var(--border));
 }
@@ -57,6 +80,24 @@ body {
   font-feature-settings:
     'rlig' 1,
     'calt' 1;
+  /* Ultimate blue gradient background */
+  background-image:
+    radial-gradient(
+      circle at 20% 80%,
+      hsla(210, 100%, 60%, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      hsla(240, 100%, 70%, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      hsla(200, 100%, 80%, 0.1) 0%,
+      transparent 50%
+    );
+  background-attachment: fixed;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -68,4 +109,347 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* Revolutionary Gradient System */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--gradient-primary)));
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, hsl(var(--gradient-secondary)));
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(135deg, hsl(var(--gradient-accent)));
+}
+
+.bg-gradient-neon {
+  background: linear-gradient(135deg, hsl(var(--gradient-neon)));
+  background-size: 400% 400%;
+  animation: gradient-flow 8s ease-in-out infinite;
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(135deg, hsl(var(--gradient-dark)));
+}
+
+.bg-gradient-glow {
+  background: linear-gradient(135deg, hsl(var(--gradient-glow)));
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+
+/* Mind-blowing blue text gradients */
+.text-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(210, 100%, 80%),
+    hsl(240, 100%, 70%),
+    hsl(270, 100%, 80%)
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 4s ease-in-out infinite;
+}
+
+.text-gradient-neon {
+  background: linear-gradient(
+    45deg,
+    hsl(180, 100%, 50%),
+    hsl(210, 100%, 60%),
+    hsl(240, 100%, 70%),
+    hsl(270, 100%, 50%)
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: neon-flow 3s ease-in-out infinite;
+}
+
+.text-gradient-electric {
+  background: linear-gradient(
+    90deg,
+    hsl(210, 100%, 80%),
+    hsl(240, 100%, 85%),
+    hsl(210, 100%, 80%)
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: electric-pulse 2s ease-in-out infinite;
+}
+
+/* Next-level shadows and glows */
+.shadow-ultra {
+  box-shadow:
+    0 0 0 1px hsla(210, 100%, 80%, 0.1),
+    0 2px 4px -1px hsla(var(--shadow-color), 0.3),
+    0 8px 16px -4px hsla(var(--shadow-color), 0.3),
+    0 16px 32px -8px hsla(var(--shadow-color), 0.2);
+}
+
+.shadow-neon {
+  box-shadow:
+    0 0 5px hsl(var(--glow-primary)),
+    0 0 10px hsl(var(--glow-primary)),
+    0 0 15px hsl(var(--glow-primary)),
+    0 0 20px hsl(var(--glow-primary));
+}
+
+.shadow-electric {
+  box-shadow:
+    0 0 2px hsl(var(--glow-accent)),
+    0 0 8px hsla(var(--glow-accent), 0.8),
+    0 0 16px hsla(var(--glow-accent), 0.6),
+    0 4px 16px hsla(var(--shadow-color), 0.3);
+}
+
+.shadow-deep {
+  box-shadow:
+    0 0 0 1px hsla(0, 0%, 100%, 0.05),
+    0 4px 8px -2px hsla(var(--shadow-color), 0.8),
+    0 12px 24px -4px hsla(var(--shadow-color), 0.5),
+    0 24px 48px -8px hsla(var(--shadow-color), 0.3);
+}
+
+/* Ultimate glass morphism */
+.glass-ultra {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.glass-neon {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.02)
+  );
+  backdrop-filter: blur(15px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 0 30px rgba(255, 255, 255, 0.05);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Mind-bending hover effects */
+.hover-levitate {
+  transition:
+    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 0.4s ease;
+}
+
+.hover-levitate:hover {
+  transform: translateY(-12px) scale(1.02);
+  filter: brightness(1.1);
+  box-shadow:
+    0 0 10px hsl(var(--glow-primary)),
+    0 20px 40px -8px hsla(var(--shadow-color), 0.5),
+    0 0 0 1px hsla(210, 100%, 80%, 0.2);
+}
+
+.hover-glow {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.hover-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, hsl(var(--gradient-glow)));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hover-glow:hover::before {
+  opacity: 1;
+}
+
+.hover-electric {
+  transition: all 0.2s ease;
+}
+
+.hover-electric:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px hsl(var(--glow-accent)));
+}
+
+/* Revolutionary animations */
+@keyframes gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes neon-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+}
+
+@keyframes electric-pulse {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes float-glow {
+  0%,
+  100% {
+    transform: translateY(0px);
+    filter: drop-shadow(0 0 10px hsl(var(--glow-primary)));
+  }
+  50% {
+    transform: translateY(-20px);
+    filter: drop-shadow(0 0 20px hsl(var(--glow-primary)));
+  }
+}
+
+@keyframes pulse-electric {
+  0%,
+  100% {
+    box-shadow: 0 0 5px hsl(var(--glow-accent));
+  }
+  50% {
+    box-shadow:
+      0 0 20px hsl(var(--glow-accent)),
+      0 0 30px hsl(var(--glow-accent));
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes text-glow-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px hsl(var(--glow-primary)),
+      0 0 20px hsl(var(--glow-primary));
+    transform: scale(1);
+  }
+  50% {
+    text-shadow:
+      0 0 20px hsl(var(--glow-primary)),
+      0 0 30px hsl(var(--glow-primary)),
+      0 0 40px hsl(var(--glow-primary));
+    transform: scale(1.02);
+  }
+}
+
+/* Ultimate utility classes */
+.animate-float-glow {
+  animation: float-glow 4s ease-in-out infinite;
+}
+
+.animate-pulse-electric {
+  animation: pulse-electric 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-text-glow {
+  animation: text-glow-pulse 3s ease-in-out infinite;
+}
+
+/* Typography enhancements */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-glow {
+  text-shadow:
+    0 0 10px hsl(var(--glow-primary)),
+    0 0 20px hsl(var(--glow-primary)),
+    0 0 30px hsl(var(--glow-primary));
+}
+
+.text-electric {
+  text-shadow:
+    0 0 5px hsl(var(--glow-accent)),
+    0 0 10px hsl(var(--glow-accent));
+}
+
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(var(--gradient-primary)));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(var(--gradient-glow)));
+}
+
+/* Selection styling */
+::selection {
+  background: hsla(210, 100%, 80%, 0.3);
+  color: hsl(var(--foreground));
+}
+
+/* Focus ring enhancement */
+.focus-electric:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(210, 100%, 80%, 0.2);
 }
