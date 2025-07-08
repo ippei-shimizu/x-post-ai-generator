@@ -43,9 +43,12 @@
       "Bash(cp:*)",
       "Bash(supabase db reset:*)",
       "Bash(./scripts/run-migration.sh:*)",
-      "Bash(./scripts/run-db-tests.sh:*)"
+      "Bash(./scripts/run-db-tests.sh:*)",
+      "Bash(kill:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }
