@@ -36,7 +36,14 @@
       "Bash(gtimeout:*)",
       "Bash(true)",
       "Bash(sed:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(chmod:*)",
+      "Bash(touch:*)",
+      "Bash(supabase status:*)",
+      "Bash(cp:*)",
+      "Bash(supabase db reset:*)",
+      "Bash(./scripts/run-migration.sh:*)",
+      "Bash(./scripts/run-db-tests.sh:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -4,7 +4,11 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { getCurrentUser, updateCurrentUser, checkUsernameAvailability } from '@/lib/database/users';
+import {
+  getCurrentUser,
+  updateCurrentUser,
+  checkUsernameAvailability,
+} from '@/lib/database/users';
 import type { Database } from '@/types/database';
 
 // Supabase クライアントのモック
@@ -263,7 +267,8 @@ describe('Users Database Operations (TDD Red Phase)', () => {
         data: null,
         error: {
           code: 'INVALID_USERNAME',
-          message: 'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
+          message:
+            'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
         },
       });
     });
@@ -275,7 +280,8 @@ describe('Users Database Operations (TDD Red Phase)', () => {
         data: null,
         error: {
           code: 'INVALID_USERNAME',
-          message: 'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
+          message:
+            'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
         },
       });
     });
@@ -301,7 +307,7 @@ describe('Users Database Operations (TDD Red Phase)', () => {
           // RLS ensures user can only access their own data
           expect(field).toBe('id');
           expect(value).toBe(mockSession.user.id);
-          
+
           return {
             single: jest.fn().mockResolvedValue({
               data: { id: mockSession.user.id },
