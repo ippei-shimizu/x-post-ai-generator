@@ -25,9 +25,9 @@ export interface Database {
         Update: UserUpdate;
       };
     };
-    Views: {};
-    Functions: {};
-    Enums: {};
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
   };
 }
 
@@ -38,25 +38,25 @@ export interface Database {
 export interface User {
   /** Supabase AuthのユーザーID */
   id: UUID;
-  
+
   /** メールアドレス（一意） */
   email: string;
-  
+
   /** ユーザー名（オプション、一意） */
   username: string | null;
-  
+
   /** 表示名 */
   display_name: string | null;
-  
+
   /** アバター画像URL */
   avatar_url: string | null;
-  
+
   /** Google OAuth ID（一意） */
   google_id: string;
-  
+
   /** 作成日時 */
   created_at: ISODateTime;
-  
+
   /** 更新日時 */
   updated_at: ISODateTime;
 }
@@ -68,25 +68,25 @@ export interface User {
 export interface UserInsert {
   /** Supabase AuthのユーザーID（必須） */
   id: UUID;
-  
+
   /** メールアドレス（必須） */
   email: string;
-  
+
   /** ユーザー名（オプション） */
   username?: string | null;
-  
+
   /** 表示名（オプション） */
   display_name?: string | null;
-  
+
   /** アバター画像URL（オプション） */
   avatar_url?: string | null;
-  
+
   /** Google OAuth ID（必須） */
   google_id: string;
-  
+
   /** 作成日時（省略時は自動設定） */
   created_at?: ISODateTime;
-  
+
   /** 更新日時（省略時は自動設定） */
   updated_at?: ISODateTime;
 }
@@ -98,19 +98,19 @@ export interface UserInsert {
 export interface UserUpdate {
   /** メールアドレス */
   email?: string;
-  
+
   /** ユーザー名 */
   username?: string | null;
-  
+
   /** 表示名 */
   display_name?: string | null;
-  
+
   /** アバター画像URL */
   avatar_url?: string | null;
-  
+
   /** Google OAuth ID */
   google_id?: string;
-  
+
   /** 更新日時（自動更新されるが明示的に設定も可能） */
   updated_at?: ISODateTime;
 }
@@ -122,7 +122,7 @@ export interface UserUpdate {
 export interface AuthenticatedUser {
   /** 認証されたユーザーのID */
   user_id: UUID;
-  
+
   /** ユーザー情報 */
   user: User;
 }
@@ -140,7 +140,7 @@ export interface DatabaseError {
 /**
  * データベース操作の結果型
  */
-export type DatabaseResult<T> = 
+export type DatabaseResult<T> =
   | { data: T; error: null }
   | { data: null; error: DatabaseError };
 
@@ -150,13 +150,13 @@ export type DatabaseResult<T> =
 export interface Pagination {
   /** 現在のページ番号（1始まり） */
   page: number;
-  
+
   /** 1ページあたりの件数 */
   per_page: number;
-  
+
   /** 総件数 */
   total: number;
-  
+
   /** 総ページ数 */
   total_pages: number;
 }
@@ -169,7 +169,7 @@ export type SortOrder = 'asc' | 'desc';
 /**
  * Users テーブルのソート可能なカラム
  */
-export type UserSortableColumn = 
+export type UserSortableColumn =
   | 'email'
   | 'username'
   | 'display_name'
@@ -182,13 +182,13 @@ export type UserSortableColumn =
 export interface UserFilter {
   /** メールアドレスの部分一致検索 */
   email?: string;
-  
+
   /** ユーザー名の部分一致検索 */
   username?: string;
-  
+
   /** 表示名の部分一致検索 */
   display_name?: string;
-  
+
   /** 作成日時の範囲 */
   created_at?: {
     from?: ISODateTime;
@@ -205,13 +205,13 @@ export interface QueryOptions {
     column: UserSortableColumn;
     order: SortOrder;
   };
-  
+
   /** ページネーション設定 */
   pagination?: {
     page: number;
     per_page: number;
   };
-  
+
   /** フィルタ条件 */
   filter?: UserFilter;
 }
@@ -222,19 +222,19 @@ export interface QueryOptions {
 export interface AuthMetadata {
   /** プロバイダー（例: 'google'） */
   provider?: string;
-  
+
   /** プロバイダー一覧 */
   providers?: string[];
-  
+
   /** プロバイダーID */
   provider_id?: string;
-  
+
   /** ユーザー名 */
   name?: string;
-  
+
   /** アバター画像URL */
   avatar_url?: string;
-  
+
   /** その他のメタデータ */
   [key: string]: unknown;
 }

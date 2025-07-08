@@ -4,7 +4,12 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import type { Database, User, UserUpdate, DatabaseResult } from '@/types/database';
+import type {
+  Database,
+  User,
+  UserUpdate,
+  DatabaseResult,
+} from '@/types/database';
 
 /**
  * Supabase クライアントの取得
@@ -21,11 +26,14 @@ const getSupabaseClient = () => {
  */
 export async function getCurrentUser(): Promise<DatabaseResult<User>> {
   const supabase = getSupabaseClient();
-  
+
   try {
     // 現在のセッションを取得
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError) {
       return {
         data: null,
@@ -36,7 +44,7 @@ export async function getCurrentUser(): Promise<DatabaseResult<User>> {
         },
       };
     }
-    
+
     if (!session?.user) {
       return {
         data: null,
@@ -46,14 +54,14 @@ export async function getCurrentUser(): Promise<DatabaseResult<User>> {
         },
       };
     }
-    
+
     // ユーザー情報を取得（RLSにより自分のデータのみ取得可能）
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', session.user.id)
       .single();
-    
+
     if (error) {
       return {
         data: null,
@@ -65,7 +73,7 @@ export async function getCurrentUser(): Promise<DatabaseResult<User>> {
         },
       };
     }
-    
+
     return { data, error: null };
   } catch (error) {
     return {
@@ -88,11 +96,14 @@ export async function updateCurrentUser(
   updates: UserUpdate
 ): Promise<DatabaseResult<User>> {
   const supabase = getSupabaseClient();
-  
+
   try {
     // 現在のセッションを取得
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       return {
         data: null,
@@ -102,7 +113,7 @@ export async function updateCurrentUser(
         },
       };
     }
-    
+
     // ユーザー情報を更新（RLSにより自分のデータのみ更新可能）
     const { data, error } = await supabase
       .from('users')
@@ -110,7 +121,7 @@ export async function updateCurrentUser(
       .eq('id', session.user.id)
       .select()
       .single();
-    
+
     if (error) {
       return {
         data: null,
@@ -122,7 +133,7 @@ export async function updateCurrentUser(
         },
       };
     }
-    
+
     return { data, error: null };
   } catch (error) {
     return {
@@ -145,7 +156,7 @@ export async function checkUsernameAvailability(
   username: string
 ): Promise<DatabaseResult<boolean>> {
   const supabase = getSupabaseClient();
-  
+
   try {
     // ユーザー名の形式チェック
     if (!username.match(/^[a-zA-Z0-9_-]{3,50}$/)) {
@@ -153,11 +164,12 @@ export async function checkUsernameAvailability(
         data: null,
         error: {
           code: 'INVALID_USERNAME',
-          message: 'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
+          message:
+            'Username must be 3-50 characters and contain only letters, numbers, hyphens, and underscores',
         },
       };
     }
-    
+
     // 重複チェック（RLSのため、実際には全ユーザーのデータは見えないが、
     // この操作は特別に許可されるべき）
     const { data, error } = await supabase
@@ -165,7 +177,7 @@ export async function checkUsernameAvailability(
       .select('id')
       .eq('username', username)
       .maybeSingle();
-    
+
     if (error) {
       return {
         data: null,
@@ -177,7 +189,7 @@ export async function checkUsernameAvailability(
         },
       };
     }
-    
+
     // データが存在しない = 使用可能
     return { data: data === null, error: null };
   } catch (error) {
@@ -198,11 +210,14 @@ export async function checkUsernameAvailability(
  */
 export async function deleteCurrentUser(): Promise<DatabaseResult<boolean>> {
   const supabase = getSupabaseClient();
-  
+
   try {
     // 現在のセッションを取得
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       return {
         data: null,
@@ -212,11 +227,11 @@ export async function deleteCurrentUser(): Promise<DatabaseResult<boolean>> {
         },
       };
     }
-    
+
     // ユーザーデータを削除（RLSにより自分のデータのみ削除可能）
     // auth.users の削除はカスケード削除で public.users も削除される
     const { error } = await supabase.auth.admin.deleteUser(session.user.id);
-    
+
     if (error) {
       return {
         data: null,
@@ -226,10 +241,10 @@ export async function deleteCurrentUser(): Promise<DatabaseResult<boolean>> {
         },
       };
     }
-    
+
     // サインアウト
     await supabase.auth.signOut();
-    
+
     return { data: true, error: null };
   } catch (error) {
     return {
@@ -249,11 +264,14 @@ export async function deleteCurrentUser(): Promise<DatabaseResult<boolean>> {
  */
 export async function syncUserFromAuth(): Promise<DatabaseResult<User>> {
   const supabase = getSupabaseClient();
-  
+
   try {
     // 現在のセッションを取得
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session?.user) {
       return {
         data: null,
@@ -263,14 +281,22 @@ export async function syncUserFromAuth(): Promise<DatabaseResult<User>> {
         },
       };
     }
-    
+
     // Auth のユーザー情報から更新データを作成
-    const updates: UserUpdate = {
-      email: session.user.email || undefined,
-      display_name: session.user.user_metadata?.name || undefined,
-      avatar_url: session.user.user_metadata?.avatar_url || undefined,
-    };
-    
+    const updates: UserUpdate = {};
+
+    if (session.user.email) {
+      updates.email = session.user.email;
+    }
+
+    if (session.user.user_metadata?.name) {
+      updates.display_name = session.user.user_metadata.name;
+    }
+
+    if (session.user.user_metadata?.avatar_url) {
+      updates.avatar_url = session.user.user_metadata.avatar_url;
+    }
+
     // ユーザー情報を更新
     return updateCurrentUser(updates);
   } catch (error) {

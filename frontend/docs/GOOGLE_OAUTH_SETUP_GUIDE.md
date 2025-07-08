@@ -12,7 +12,7 @@
   ```
   GOOGLE_CLIENT_ID=your-google-client-id
   GOOGLE_CLIENT_SECRET=your-google-client-secret
-  NEXTAUTH_URL=http://localhost:3000
+  NEXTAUTH_URL=http://localhost:3010
   ```
 
 ## 1. Google Cloud Consoleへのアクセス

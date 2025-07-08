@@ -1568,7 +1568,7 @@ const getUserPersonas = async (userId: string): Promise<Persona[]> => {
 
 ```bash
 # .env.local (フロントエンド)
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3010
 NEXTAUTH_SECRET=your-secret-key
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
