@@ -1,4 +1,24 @@
-import { LogOut, Settings, User, Loader2, type LucideIcon } from 'lucide-react';
+import {
+  LogOut,
+  Settings,
+  User,
+  Loader2,
+  Search,
+  SearchX,
+  ExternalLink,
+  AlertCircle,
+  Plus,
+  Edit,
+  Trash2,
+  Check,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Filter,
+  SortAsc,
+  SortDesc,
+  type LucideIcon,
+} from 'lucide-react';
 
 export type Icon = LucideIcon;
 
@@ -27,4 +47,24 @@ export const Icons = {
   settings: Settings,
   user: User,
   spinner: Loader2,
+  // ベクトル検索関連
+  Search,
+  SearchX,
+  ExternalLink,
+  AlertCircle,
+  // CRUD操作
+  Plus,
+  Edit,
+  Trash2,
+  Check,
+  X,
+  // ナビゲーション
+  ChevronDown,
+  ChevronUp,
+  // フィルタ・ソート
+  Filter,
+  SortAsc,
+  SortDesc,
+  // Loader2 エイリアス
+  Loader2,
 };
