@@ -8,6 +8,11 @@ import type {
   ContentSourceInsert,
   ContentSourceUpdate,
 } from './content-sources';
+import type {
+  ContentEmbedding,
+  ContentEmbeddingInsert,
+  ContentEmbeddingUpdate,
+} from './vector';
 
 /**
  * UUID型のエイリアス
@@ -34,6 +39,11 @@ export interface Database {
         Row: ContentSource;
         Insert: ContentSourceInsert;
         Update: ContentSourceUpdate;
+      };
+      content_embeddings: {
+        Row: ContentEmbedding;
+        Insert: ContentEmbeddingInsert;
+        Update: ContentEmbeddingUpdate;
       };
     };
     Views: Record<string, never>;
