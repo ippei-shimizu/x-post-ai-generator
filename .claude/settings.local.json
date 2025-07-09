@@ -46,9 +46,12 @@
       "Bash(./scripts/run-db-tests.sh:*)",
       "Bash(kill:*)",
       "Bash(supabase:*)",
-      "Bash(PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -f database/tests/content_sources_rls_test.sql)"
+      "Bash(PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -f database/tests/content_sources_rls_test.sql)",
+      "Bash(git check-ignore:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }
