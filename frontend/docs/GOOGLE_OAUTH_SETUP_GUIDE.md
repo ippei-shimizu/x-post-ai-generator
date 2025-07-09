@@ -53,14 +53,14 @@
 ### 必須URI（開発環境）：
 
 ```
-http://localhost:3000/api/auth/callback/google
+http://localhost:3010/api/auth/callback/google
 ```
 
 ### 追加で設定すべきURI（開発環境）：
 
 ```
-http://localhost:3000
-http://127.0.0.1:3000/api/auth/callback/google
+http://localhost:3010
+http://127.0.0.1:3010/api/auth/callback/google
 ```
 
 ### 本番環境用URI（例）：
@@ -94,7 +94,7 @@ https://www.yourdomain.com/api/auth/callback/google
 ### 必須設定（開発環境）：
 
 ```
-http://localhost:3000
+http://localhost:3010
 http://localhost
 ```
 
@@ -168,7 +168,7 @@ https://www.yourdomain.com
 ### 開発環境：
 
 ```env
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3010
 NEXTAUTH_SECRET=your-development-secret
 GOOGLE_CLIENT_ID=your-client-id
 GOOGLE_CLIENT_SECRET=your-client-secret

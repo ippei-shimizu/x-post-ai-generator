@@ -32,7 +32,7 @@ const createMockEvent = (
   headers: {
     ...(authHeader ? { authorization: authHeader } : {}),
     "user-agent": "test-user-agent",
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3010",
   },
   multiValueHeaders: {},
   multiValueQueryStringParameters: null,
@@ -196,7 +196,7 @@ describe("Auth Test Function - TDD", () => {
       expect(body.data.headers).toBeDefined();
       expect(body.data.headers.authorization).toBe("***[REDACTED]***");
       expect(body.data.headers.userAgent).toBe("test-user-agent");
-      expect(body.data.headers.origin).toBe("http://localhost:3000");
+      expect(body.data.headers.origin).toBe("http://localhost:3010");
     });
 
     it("should include user ID in response headers", async () => {

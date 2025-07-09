@@ -76,7 +76,7 @@ provider:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY, 'sk-development-key-please-replace-with-real-key'}
     GITHUB_TOKEN: ${env:GITHUB_TOKEN, ''}
     CLOUDWATCH_LOG_GROUP: /aws/lambda/${self:service}-${self:custom.stage}
-    CORS_ORIGINS: ${env:CORS_ORIGINS, 'http://localhost:3000'}
+    CORS_ORIGINS: ${env:CORS_ORIGINS, 'http://localhost:3010'}
     RATE_LIMIT_REQUESTS_PER_MINUTE: ${env:RATE_LIMIT_REQUESTS_PER_MINUTE, '100'}
 
   # IAM Role設定 (最小権限の原則)
@@ -105,7 +105,7 @@ provider:
     name: ${self:custom.apiName}
     cors:
       allowedOrigins:
-        - ${env:CORS_ORIGINS, 'http://localhost:3000'}
+        - ${env:CORS_ORIGINS, 'http://localhost:3010'}
       allowedHeaders:
         - Content-Type
         - Authorization
