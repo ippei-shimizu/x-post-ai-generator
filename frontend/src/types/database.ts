@@ -3,6 +3,12 @@
  * データベーステーブルの型定義とRLS対応
  */
 
+import type {
+  ContentSource,
+  ContentSourceInsert,
+  ContentSourceUpdate,
+} from './content-sources';
+
 /**
  * UUID型のエイリアス
  */
@@ -23,6 +29,11 @@ export interface Database {
         Row: User;
         Insert: UserInsert;
         Update: UserUpdate;
+      };
+      content_sources: {
+        Row: ContentSource;
+        Insert: ContentSourceInsert;
+        Update: ContentSourceUpdate;
       };
     };
     Views: Record<string, never>;
