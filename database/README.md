@@ -1,8 +1,9 @@
-# X-Post-AI-Generator データベースセットアップ
+# X-Post-AI-Generator データベース設計
 
 ## 概要
 
-このディレクトリは、X-Post-AI-Generatorプロジェクトのデータベーススキーマ、マイグレーション、関数、テストを含んでいます。データベースはPostgreSQLとpgvector拡張機能を使用してベクトル類似度検索を行い、Row Level Security（RLS）によってユーザーデータを完全に分離します。
+このディレクトリには、X-Post-AI-Generatorのデータベース設計、マイグレーション、テストが含まれています。
+Supabase（PostgreSQL）を使用し、Row Level Security (RLS) による完全なユーザーデータ分離を実現しています。
 
 ## 主要機能
 
@@ -11,54 +12,48 @@
 - **監査ログ**: コスト追跡と分析のためのAPI使用量ログ
 - **自動クリーンアップ**: ストレージ管理のための生コンテンツ30日期限
 
-## ディレクトリ構造
+## ディレクトリ構成
 
 ```
 database/
-├── migrations/           # データベーススキーママイグレーション
-│   ├── 001_create_initial_schema.sql
-│   └── 002_enable_rls_policies.sql
-├── functions/           # PostgreSQL関数
-│   └── search_user_content.sql
-├── tests/              # データベーステスト
-│   └── rls_user_isolation_test.sql
-└── README.md           # このファイル
+├── migrations/     # データベースマイグレーションファイル
+│   └── 001_create_users_table.sql
+├── tests/         # RLSポリシーやトリガーのテストファイル
+│   └── users_rls_test.sql
+├── functions/     # カスタムデータベース関数（将来的に追加予定）
+└── README.md      # このファイル
 ```
 
 ## セットアップ手順
 
-### 1. 前提条件
-
-- PostgreSQL 14+ with pgvector拡張機能
-- Supabase CLI（ローカル開発用）
-- UUID-OSSP拡張機能
-
-### 2. ローカル開発環境セットアップ
+### 1. ローカル開発環境
 
 ```bash
-# Supabaseを初期化（まだ行っていない場合）
-npx supabase init
+# Supabase CLIのインストール（macOS）
+brew install supabase/tap/supabase
 
-# ローカルSupabaseを開始
-npx supabase start
+# ローカルSupabaseの起動
+supabase start
 
-# マイグレーションを適用
-npx supabase db push
+# マイグレーションの実行
+./scripts/run-migration.sh local database/migrations/001_create_users_table.sql
 
-# テストを実行
-npx supabase db test
+# テストの実行
+./scripts/run-db-tests.sh local database/tests/users_rls_test.sql
 ```
 
-### 3. 本番環境セットアップ
+### 2. リモート環境（本番/ステージング）
 
-1. 新しいSupabaseプロジェクトを作成
-2. SQLエディタでvector拡張機能を有効化：
-   ```sql
-   CREATE EXTENSION IF NOT EXISTS vector;
-   ```
-3. Supabaseダッシュボードまたは CLI を通じてマイグレーションを適用
-4. RLSポリシーを設定
-5. Google OAuth プロバイダーを設定
+```bash
+# 環境変数の設定
+export SUPABASE_DB_URL='postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres'
+
+# マイグレーションの実行
+./scripts/run-migration.sh remote database/migrations/001_create_users_table.sql
+
+# テストの実行
+./scripts/run-db-tests.sh remote database/tests/users_rls_test.sql
+```
 
 ## データベーススキーマ
 

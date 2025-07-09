@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:turbo": "next dev --turbopack",
-    "dev:staging": "NODE_ENV=staging next dev",
+    "dev": "next dev -p 3010",
+    "dev:turbo": "next dev --turbopack -p 3010",
+    "dev:staging": "NODE_ENV=staging next dev -p 3010",
     "build": "next build",
     "build:staging": "NODE_ENV=staging next build",
     "build:production": "NODE_ENV=production next build",
