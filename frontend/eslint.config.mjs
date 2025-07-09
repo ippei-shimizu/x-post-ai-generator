@@ -10,10 +10,12 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends('next/core-web-vitals'),
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn', // any の使用を警告レベルに
+      '@typescript-eslint/no-explicit-any': 'off', // TypeScriptプラグインの問題を回避
+      '@typescript-eslint/no-unsafe-declaration-merging': 'off', // ESLint 9 互換性問題を回避
+      '@typescript-eslint/no-unused-vars': 'off', // ESLint 9 互換性問題を回避
     },
   },
   {

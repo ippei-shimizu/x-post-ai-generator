@@ -52,7 +52,11 @@
       "Bash(PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -f database/tests/vector_search_rls_test.sql)",
       "Bash(PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -c \"\\dt content_embeddings\")",
       "Bash(PGPASSWORD=postgres psql -h localhost -p 54322 -U postgres -d postgres -c \"\\df search_user_embeddings\")",
-      "Bash(PGPASSWORD=postgres psql:*)"
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(psql:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(pnpm lint:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

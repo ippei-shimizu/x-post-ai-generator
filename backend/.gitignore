@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# Build Output
+dist/
+.build/
+.serverless/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Testing
+.DS_Store
+.vscode/
+.idea/
+
+# AWS
+.aws/
+
+# Serverless
+.serverless_nextjs/
+.serverless_plugins/
+
+# TypeScript
+*.tsbuildinfo
+.tsc/
+
+# Temporary files
+.tmp/
+.cache/
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Debug
+*.debug
+.debug
+
+# Package-lock files (using pnpm)
+package-lock.json
+yarn.lock
