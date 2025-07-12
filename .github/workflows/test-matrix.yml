@@ -1,0 +1,243 @@
+# Issue #24: 統合テストとCI/CD基盤 - テスト並列実行マトリックス最適化
+#
+# 効率的な並列テスト実行のためのマトリックス戦略設定
+
+name: Test Matrix Strategy
+
+on:
+  workflow_call:
+    inputs:
+      test-type:
+        required: true
+        type: string
+        description: "Type of tests to run (unit|integration|e2e|security|performance)"
+      workspace:
+        required: true
+        type: string
+        description: "Workspace to test (frontend|backend|both)"
+      parallel-jobs:
+        required: false
+        type: number
+        default: 4
+        description: "Number of parallel jobs"
+
+jobs:
+  # 動的テストマトリックス生成
+  generate-matrix:
+    name: Generate Test Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      total-jobs: ${{ steps.matrix.outputs.total-jobs }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate test matrix
+        id: matrix
+        run: |
+          # テストタイプに基づいてマトリックスを動的生成
+          case "${{ inputs.test-type }}" in
+            "unit")
+              matrix='{"include":[
+                {"workspace":"frontend","test-pattern":"**/*.test.{ts,tsx}","max-workers":2},
+                {"workspace":"backend","test-pattern":"**/*.test.ts","max-workers":2}
+              ]}'
+              ;;
+            "integration")
+              matrix='{"include":[
+                {"workspace":"root","test-pattern":"**/auth-flow.test.ts","max-workers":1,"timeout":30000},
+                {"workspace":"root","test-pattern":"**/data-isolation.test.ts","max-workers":1,"timeout":30000},
+                {"workspace":"root","test-pattern":"**/frontend-backend.test.ts","max-workers":1,"timeout":30000}
+              ]}'
+              ;;
+            "security")
+              matrix='{"include":[
+                {"workspace":"root","test-pattern":"**/*security*.test.ts","max-workers":1,"timeout":45000},
+                {"workspace":"root","test-pattern":"**/*rls*.test.ts","max-workers":1,"timeout":30000},
+                {"workspace":"backend","test-pattern":"**/auth*.test.ts","max-workers":2,"timeout":15000}
+              ]}'
+              ;;
+            "performance")
+              matrix='{"include":[
+                {"workspace":"backend","test-pattern":"**/*performance*.test.ts","max-workers":1,"timeout":60000},
+                {"workspace":"frontend","test-pattern":"**/*performance*.test.ts","max-workers":1,"timeout":60000}
+              ]}'
+              ;;
+            "e2e")
+              matrix='{"include":[
+                {"workspace":"frontend","test-pattern":"**/e2e/**/*.test.ts","max-workers":1,"timeout":120000}
+              ]}'
+              ;;
+            *)
+              matrix='{"include":[{"workspace":"backend","test-pattern":"**/*.test.ts","max-workers":2}]}'
+              ;;
+          esac
+
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "total-jobs=$(echo $matrix | jq '.include | length')" >> $GITHUB_OUTPUT
+
+  # 並列テスト実行
+  run-tests:
+    name: Run Tests (${{ matrix.workspace }})
+    runs-on: ubuntu-latest
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.total-jobs > 0
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    services:
+      postgres:
+        image: supabase/postgres:15.1.0.117
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          if [ "${{ matrix.workspace }}" != "root" ]; then
+            cd ${{ matrix.workspace }} && pnpm install --frozen-lockfile
+          fi
+
+      - name: Setup test database
+        if: contains(inputs.test-type, 'integration') || contains(inputs.test-type, 'security')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE EXTENSION IF NOT EXISTS vector;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE test_db_${{ strategy.job-index }};"
+
+      - name: Run database migrations
+        if: contains(inputs.test-type, 'integration') || contains(inputs.test-type, 'security')
+        run: |
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db_${{ strategy.job-index }}"
+          # マイグレーション実行
+          if [ -f "database/migrations/001_create_users_table.sql" ]; then
+            PGPASSWORD=postgres psql -h localhost -U postgres -d test_db_${{ strategy.job-index }} -f database/migrations/001_create_users_table.sql
+          fi
+          if [ -f "database/migrations/002_create_content_sources_table.sql" ]; then
+            PGPASSWORD=postgres psql -h localhost -U postgres -d test_db_${{ strategy.job-index }} -f database/migrations/002_create_content_sources_table.sql
+          fi
+
+      - name: Run tests with optimized settings
+        run: |
+          export NODE_OPTIONS="--max-old-space-size=4096"
+          export JEST_MAX_WORKERS="${{ matrix.max-workers }}"
+          export TEST_TIMEOUT="${{ matrix.timeout || 30000 }}"
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db_${{ strategy.job-index }}"
+
+          case "${{ inputs.test-type }}" in
+            "unit")
+              cd ${{ matrix.workspace }} && pnpm run test -- --maxWorkers=${{ matrix.max-workers }} --testPathPattern="${{ matrix.test-pattern }}"
+              ;;
+            "integration"|"security")
+              pnpm run test:${{ inputs.test-type }} -- --maxWorkers=${{ matrix.max-workers }} --testPathPattern="${{ matrix.test-pattern }}" --testTimeout=${{ matrix.timeout }}
+              ;;
+            "performance")
+              cd ${{ matrix.workspace }} && pnpm run test:performance -- --maxWorkers=1 --testPathPattern="${{ matrix.test-pattern }}"
+              ;;
+            "e2e")
+              cd ${{ matrix.workspace }} && pnpm run test:e2e -- --maxWorkers=1
+              ;;
+          esac
+        env:
+          NODE_ENV: test
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role-key
+          JWT_SECRET: test-jwt-secret-for-ci
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ inputs.test-type }}-${{ matrix.workspace }}-${{ strategy.job-index }}
+          path: |
+            **/test-results/
+            **/coverage/
+            **/test-reports/
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./${{ matrix.workspace }}/coverage/lcov.info
+          flags: ${{ inputs.test-type }}-${{ matrix.workspace }}
+          name: ${{ inputs.test-type }}-${{ matrix.workspace }}-coverage
+          fail_ci_if_error: false
+
+  # テスト結果の集約
+  aggregate-results:
+    name: Aggregate Test Results
+    runs-on: ubuntu-latest
+    needs: [generate-matrix, run-tests]
+    if: always()
+
+    steps:
+      - name: Download all test results
+        uses: actions/download-artifact@v3
+        with:
+          path: aggregated-results
+
+      - name: Aggregate test reports
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Workspace | Status | Duration |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|---------|----------|" >> $GITHUB_STEP_SUMMARY
+
+          total_duration=0
+          passed_jobs=0
+          failed_jobs=0
+
+          for result_dir in aggregated-results/test-results-*; do
+            if [ -d "$result_dir" ]; then
+              workspace=$(basename "$result_dir" | cut -d'-' -f4-5)
+              if [ -f "$result_dir/junit.xml" ]; then
+                # JUnit XMLから結果を解析
+                status="✅ Passed"
+                duration="N/A"
+                ((passed_jobs++))
+              else
+                status="❌ Failed"
+                duration="N/A"
+                ((failed_jobs++))
+              fi
+              echo "| $workspace | $status | $duration |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Summary:** $passed_jobs passed, $failed_jobs failed" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set job status
+        run: |
+          if [ ${{ needs.run-tests.result }} != 'success' ]; then
+            echo "Some tests failed"
+            exit 1
+          fi
