@@ -1,0 +1,200 @@
+# Issue #22: Serverless Framework セットアップ - Lambda デプロイ基盤
+# X-Post-AI-Generator バックエンド - AWS Lambda Serverless 設定
+
+service: x-post-ai-generator-backend
+
+frameworkVersion: "3"
+
+# プラグイン設定
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+# カスタム設定
+custom:
+  # Stage設定
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-northeast-1'}
+
+  # Environment variables
+  dotenv:
+    path: .env
+
+  # esbuild設定 (高速ビルド & 最適化)
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    target: node18
+    platform: node
+    format: cjs
+    exclude:
+      - aws-sdk
+    external:
+      - "@aws-sdk/client-cloudwatch-logs"
+      - "@aws-sdk/client-lambda"
+    packager: pnpm
+    packagePath: package.json
+
+  # Serverless Offline設定
+  serverless-offline:
+    httpPort: 4000
+    host: 0.0.0.0
+    stage: ${self:custom.stage}
+    region: ${self:custom.region}
+    printOutput: true
+
+  # リソース名
+  stackName: ${self:service}-${self:custom.stage}
+  apiName: ${self:service}-${self:custom.stage}
+
+  # CloudWatch Logs設定
+  logRetentionInDays:
+    dev: 7
+    staging: 14
+    prod: 30
+
+# Provider設定
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+
+  # Lambda設定
+  timeout: 28
+  memorySize: 512
+
+  # 環境変数
+  environment:
+    STAGE: ${self:custom.stage}
+    SUPABASE_URL: ${env:SUPABASE_URL, 'https://development-project.supabase.co'}
+    SUPABASE_SERVICE_ROLE_KEY: ${env:SUPABASE_SERVICE_ROLE_KEY, 'development-service-role-key'}
+    JWT_SECRET: ${env:JWT_SECRET, 'development-jwt-secret-key-please-change-in-production'}
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY, 'sk-development-key-please-replace-with-real-key'}
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN, ''}
+    CLOUDWATCH_LOG_GROUP: /aws/lambda/${self:service}-${self:custom.stage}
+    CORS_ORIGINS: ${env:CORS_ORIGINS, 'http://localhost:3010'}
+    RATE_LIMIT_REQUESTS_PER_MINUTE: ${env:RATE_LIMIT_REQUESTS_PER_MINUTE, '100'}
+
+  # IAM Role設定 (最小権限の原則)
+  iamRoleStatements:
+    # CloudWatch Logs
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource:
+        - arn:aws:logs:${self:custom.region}:*:log-group:/aws/lambda/${self:service}-${self:custom.stage}*:*
+
+    # Lambda実行
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - arn:aws:lambda:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-*
+
+  # CloudWatch Logs設定
+  logRetentionInDays: ${self:custom.logRetentionInDays.${self:custom.stage}}
+
+  # API Gateway設定
+  httpApi:
+    name: ${self:custom.apiName}
+    cors:
+      allowedOrigins:
+        - ${env:CORS_ORIGINS, 'http://localhost:3010'}
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Amz-Date
+        - X-Api-Key
+        - X-Amz-Security-Token
+        - X-Amz-User-Agent
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowCredentials: true
+
+    # API Gateway v2 ではthrottlingはサポートされていないため、
+    # AWS Consoleまたは別途設定が必要
+
+# Lambda関数定義
+functions:
+  # ヘルスチェック関数 (TDD用)
+  health:
+    handler: functions/health/index.handler
+    description: Health check function for deployment verification
+    events:
+      - httpApi:
+          path: /health
+          method: get
+    environment:
+      FUNCTION_NAME: health
+
+  # 認証テスト関数 (TDD用)
+  authTest:
+    handler: functions/auth/test.handler
+    description: Authentication test function for JWT verification
+    events:
+      - httpApi:
+          path: /auth/test
+          method: get
+    environment:
+      FUNCTION_NAME: authTest
+
+# CloudFormation リソース
+resources:
+  Resources:
+    # CloudWatch Log Group
+    CloudWatchLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/lambda/${self:service}-${self:custom.stage}
+        RetentionInDays: ${self:custom.logRetentionInDays.${self:custom.stage}}
+
+    # API Gateway アクセスログ
+    ApiGatewayLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/apigateway/${self:service}-${self:custom.stage}
+        RetentionInDays: ${self:custom.logRetentionInDays.${self:custom.stage}}
+
+  Outputs:
+    # API Gateway URL
+    ApiGatewayUrl:
+      Description: API Gateway endpoint URL for ${self:custom.stage} environment
+      Value:
+        Fn::Join:
+          - ""
+          - - https://
+            - Ref: HttpApi
+            - .execute-api.
+            - ${self:custom.region}
+            - .amazonaws.com
+      Export:
+        Name: ${self:service}-${self:custom.stage}-api-url
+
+    # CloudWatch Log Group Name
+    LogGroupName:
+      Description: CloudWatch Log Group Name
+      Value: /aws/lambda/${self:service}-${self:custom.stage}
+      Export:
+        Name: ${self:service}-${self:custom.stage}-log-group
+
+# パッケージ設定
+package:
+  patterns:
+    - "!**/__tests__/**"
+    - "!**/*.test.ts"
+    - "!**/*.spec.ts"
+    - "!coverage/**"
+    - "!.nyc_output/**"
+    - "!.env*"
+    - "!README.md"
+    - "!jest.config.js"
+    - "!tsconfig.json"
