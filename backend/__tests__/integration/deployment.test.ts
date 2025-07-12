@@ -13,7 +13,7 @@ const execAsync = promisify(exec);
 
 // テスト環境設定
 const TEST_STAGE = "test";
-const TEST_REGION = "us-east-1";
+const TEST_REGION = "ap-northeast-1";
 const BACKEND_DIR = process.cwd();
 const SERVERLESS_YML_PATH = path.join(BACKEND_DIR, "serverless.yml");
 const PACKAGE_JSON_PATH = path.join(BACKEND_DIR, "package.json");
@@ -182,7 +182,7 @@ describe("Serverless Framework Deployment - Integration Tests", () => {
 
         // 設定の出力に環境変数が正しく反映されていることを確認
         expect(stdout).toMatch(/stage: dev/);
-        expect(stdout).toMatch(/region: us-east-1/);
+        expect(stdout).toMatch(/region: ap-northeast-1/);
       } catch (error) {
         console.error("Serverless configuration validation failed:", error);
         throw error;

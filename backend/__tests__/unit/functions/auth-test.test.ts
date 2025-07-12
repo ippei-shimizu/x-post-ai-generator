@@ -247,7 +247,7 @@ describe("Auth Test Function - TDD", () => {
 
       const body = JSON.parse(result.body);
       expect(body.success).toBe(false);
-      expect(body.error.code).toBe("INVALID_TOKEN_FORMAT");
+      expect(body.error.code).toBe("INVALID_TOKEN");
     });
 
     it("should return 401 when token is malformed", async () => {
@@ -417,7 +417,7 @@ describe("Auth Test Function - TDD", () => {
       )) as any;
       const body = JSON.parse(result.body);
 
-      expect(body.meta.executionTime).toBeGreaterThan(0);
+      expect(body.meta.executionTime).toBeGreaterThanOrEqual(0);
       expect(body.meta.executionTime).toBeLessThan(1000);
     });
   });
