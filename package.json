@@ -8,6 +8,10 @@
     "dev": "pnpm --parallel run dev",
     "build": "pnpm --recursive run build",
     "test": "pnpm --recursive run test",
+    "test:integration": "jest --config jest.config.integration.js",
+    "test:security": "jest --config jest.config.integration.js --testNamePattern=\"security|RLS|isolation\"",
+    "test:auth-security": "jest --config jest.config.integration.js --testNamePattern=\"auth.*security\"",
+    "test:all": "pnpm run test && pnpm run test:integration",
     "lint": "pnpm --recursive run lint",
     "type-check": "pnpm --recursive run type-check",
     "format": "prettier --write ."
@@ -15,6 +19,15 @@
   "devDependencies": {
     "@types/node": "^20",
     "prettier": "^3.6.2",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "@jest/globals": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "jest-html-reporters": "^3.1.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "jsonwebtoken": "^9.0.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.3.0"
   }
 }

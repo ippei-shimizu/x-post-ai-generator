@@ -109,7 +109,7 @@ describe("Health Check Function - TDD", () => {
   describe("Red Phase: 基本要件テスト", () => {
     it("should return 200 status code for healthy system", async () => {
       setValidEnvironment();
-      
+
       const event = createMockEvent();
       const context = createMockContext();
       const result = await handler(event, context, () => {});
@@ -119,7 +119,7 @@ describe("Health Check Function - TDD", () => {
 
     it("should return JSON content type", async () => {
       setValidEnvironment();
-      
+
       const event = createMockEvent();
       const result = (await handler(
         event,
@@ -133,7 +133,7 @@ describe("Health Check Function - TDD", () => {
 
     it("should include CORS headers", async () => {
       setValidEnvironment();
-      
+
       const event = createMockEvent();
       const result = (await handler(
         event,

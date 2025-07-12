@@ -1,0 +1,363 @@
+name: CI/CD Pipeline - TDD Integration
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "18"
+  PNPM_VERSION: "8"
+
+jobs:
+  # テストカバレッジとコード品質チェック
+  code-quality:
+    name: Code Quality & Coverage
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        workspace: [frontend, backend]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd ${{ matrix.workspace }} && pnpm install --frozen-lockfile
+
+      - name: TypeScript type check
+        run: cd ${{ matrix.workspace }} && pnpm run typecheck
+        continue-on-error: false
+
+      - name: ESLint check
+        run: cd ${{ matrix.workspace }} && pnpm run lint
+        continue-on-error: false
+
+      - name: Run unit tests with coverage
+        run: cd ${{ matrix.workspace }} && pnpm run test -- --coverage --passWithNoTests
+        env:
+          NODE_ENV: test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./${{ matrix.workspace }}/coverage/lcov.info
+          flags: ${{ matrix.workspace }}
+          name: ${{ matrix.workspace }}-coverage
+          fail_ci_if_error: false
+
+  # バックエンド統合テスト（Supabase + Lambda）
+  backend-integration:
+    name: Backend Integration Tests
+    runs-on: ubuntu-latest
+    needs: [code-quality]
+
+    services:
+      postgres:
+        image: supabase/postgres:15.1.0.117
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd backend && pnpm install --frozen-lockfile
+
+      - name: Setup test environment
+        run: |
+          # PostgreSQL拡張とテストデータベース作成
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE EXTENSION IF NOT EXISTS vector;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE test_db;"
+
+      - name: Run database migrations
+        run: |
+          cd backend
+          # テスト用データベース設定
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
+          # マイグレーション実行
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ../database/migrations/001_create_users_table.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ../database/migrations/002_create_content_sources_table.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ../database/migrations/003_setup_pgvector_embeddings.sql
+
+      - name: Run backend integration tests
+        run: cd backend && pnpm run test:integration
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role-key
+          JWT_SECRET: test-jwt-secret-for-ci
+          OPENAI_API_KEY: sk-test-openai-key-for-ci
+
+  # フロントエンド統合テスト
+  frontend-integration:
+    name: Frontend Integration Tests
+    runs-on: ubuntu-latest
+    needs: [code-quality]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd frontend && pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        run: cd frontend && pnpm run build
+        env:
+          NODE_ENV: production
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-nextauth-secret
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+
+      - name: Run frontend integration tests
+        run: cd frontend && pnpm run test:integration
+        env:
+          NODE_ENV: test
+
+  # セキュリティテスト
+  security-tests:
+    name: Security & RLS Tests
+    runs-on: ubuntu-latest
+    needs: [backend-integration, frontend-integration]
+
+    services:
+      postgres:
+        image: supabase/postgres:15.1.0.117
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd backend && pnpm install --frozen-lockfile
+
+      - name: Setup security test database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE EXTENSION IF NOT EXISTS vector;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE security_test_db;"
+
+      - name: Run RLS policy tests
+        run: |
+          cd backend
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/security_test_db"
+          # RLS テスト専用マイグレーション
+          PGPASSWORD=postgres psql -h localhost -U postgres -d security_test_db -f ../database/migrations/002_enable_rls_policies.sql
+          # RLS テスト実行
+          pnpm run test:security
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/security_test_db
+
+      - name: Run authentication security tests
+        run: cd backend && pnpm run test:auth-security
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-jwt-secret-for-security
+
+  # E2Eテスト（全体統合）
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: [security-tests]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd frontend && pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: cd frontend && npx playwright install --with-deps
+
+      - name: Start services for E2E
+        run: |
+          # フロントエンド起動（バックグラウンド）
+          cd frontend && pnpm run dev &
+          # サービス起動待機
+          sleep 10
+
+      - name: Run E2E tests
+        run: cd frontend && pnpm run test:e2e
+        env:
+          NODE_ENV: test
+          BASE_URL: http://localhost:3000
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: e2e-test-results
+          path: frontend/test-results/
+
+  # デプロイメント（mainブランチのみ）
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [security-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          cd backend && pnpm install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Deploy backend to staging
+        run: |
+          cd backend
+          pnpm run deploy -- --stage staging
+        env:
+          STAGE: staging
+          AWS_REGION: ap-northeast-1
+
+      - name: Deploy frontend to Vercel staging
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./frontend
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+  # テスト結果通知
+  notify-results:
+    name: Notify Test Results
+    runs-on: ubuntu-latest
+    needs:
+      [code-quality, backend-integration, frontend-integration, security-tests]
+    if: always()
+
+    steps:
+      - name: Notify success
+        if: ${{ needs.code-quality.result == 'success' && needs.backend-integration.result == 'success' && needs.frontend-integration.result == 'success' && needs.security-tests.result == 'success' }}
+        run: |
+          echo "✅ All tests passed! Ready for deployment."
+          echo "- Code Quality: ✅"
+          echo "- Backend Integration: ✅"
+          echo "- Frontend Integration: ✅"
+          echo "- Security Tests: ✅"
+
+      - name: Notify failure
+        if: ${{ needs.code-quality.result == 'failure' || needs.backend-integration.result == 'failure' || needs.frontend-integration.result == 'failure' || needs.security-tests.result == 'failure' }}
+        run: |
+          echo "❌ Some tests failed!"
+          echo "- Code Quality: ${{ needs.code-quality.result }}"
+          echo "- Backend Integration: ${{ needs.backend-integration.result }}"
+          echo "- Frontend Integration: ${{ needs.frontend-integration.result }}"
+          echo "- Security Tests: ${{ needs.security-tests.result }}"
+          exit 1

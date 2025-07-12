@@ -8,12 +8,39 @@ importers:
 
   .:
     devDependencies:
+      '@jest/globals':
+        specifier: ^29.7.0
+        version: 29.7.0
+      '@supabase/supabase-js':
+        specifier: ^2.39.0
+        version: 2.50.3
+      '@types/jsonwebtoken':
+        specifier: ^9.0.0
+        version: 9.0.10
       '@types/node':
         specifier: ^20
         version: 20.19.4
+      dotenv:
+        specifier: ^16.3.0
+        version: 16.6.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.19.4)(ts-node@10.9.2(@swc/core@1.12.9)(@types/node@20.19.4)(typescript@5.8.3))
+      jest-html-reporters:
+        specifier: ^3.1.0
+        version: 3.1.7
+      jest-junit:
+        specifier: ^16.0.0
+        version: 16.0.0
+      jsonwebtoken:
+        specifier: ^9.0.0
+        version: 9.0.2
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      ts-jest:
+        specifier: ^29.1.0
+        version: 29.4.0(@babel/core@7.28.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.0))(esbuild@0.19.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.4)(ts-node@10.9.2(@swc/core@1.12.9)(@types/node@20.19.4)(typescript@5.8.3)))(typescript@5.8.3)
       typescript:
         specifier: ^5.6.0
         version: 5.8.3
@@ -5799,6 +5826,9 @@ packages:
   jest-haste-map@29.7.0:
     resolution: {integrity: sha512-fP8u2pyfqx0K1rGn1R9pyE0/KTn+G7PxktWidOBTqFPLYX0b9ksaMFkhK5vrS3DVun09pckLdlx90QthlW7AmA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  jest-html-reporters@3.1.7:
+    resolution: {integrity: sha512-GTmjqK6muQ0S0Mnksf9QkL9X9z2FGIpNSxC52E0PHDzjPQ1XDu2+XTI3B3FS43ZiUzD1f354/5FfwbNIBzT7ew==}
 
   jest-junit@16.0.0:
     resolution: {integrity: sha512-A94mmw6NfJab4Fg/BlvVOUXzXgF0XIH6EmTgJ5NDPp4xoKq0Kr7sErb+4Xs9nZvu58pJojz5RFGpqnZYJTrRfQ==}
@@ -15799,6 +15829,11 @@ snapshots:
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
+
+  jest-html-reporters@3.1.7:
+    dependencies:
+      fs-extra: 10.1.0
+      open: 8.4.2
 
   jest-junit@16.0.0:
     dependencies:
