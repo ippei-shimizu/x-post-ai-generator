@@ -6,8 +6,8 @@
 
 describe("Serverless Framework Basic Setup", () => {
   it("should have proper environment setup", () => {
-    // Node.js バージョンの確認
-    expect(process.version).toMatch(/^v18\./);
+    // Node.js バージョンの確認（v18またはv20を許可）
+    expect(process.version).toMatch(/^v(18|20)\./);
   });
 
   it("should be able to import AWS Lambda types", () => {

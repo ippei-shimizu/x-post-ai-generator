@@ -9,6 +9,7 @@
     "deploy": "serverless deploy",
     "deploy:dev": "serverless deploy --stage dev",
     "deploy:staging": "serverless deploy --stage staging",
+    "deploy:staging:safe": "./scripts/deploy-staging.sh",
     "deploy:prod": "serverless deploy --stage prod",
     "remove": "serverless remove",
     "logs": "serverless logs -f",
