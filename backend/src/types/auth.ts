@@ -56,7 +56,7 @@ export class AuthError extends Error {
   constructor(
     public code: AuthErrorCode,
     message: string,
-    public statusCode: number = 401
+    public statusCode: number = 401,
   ) {
     super(message);
     this.name = "AuthError";
@@ -120,7 +120,7 @@ export interface AuthMiddlewareOptions {
  * 型ガード: AuthenticatedAPIGatewayProxyEvent かどうかを判定
  */
 export function isAuthenticatedEvent(
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): event is AuthenticatedAPIGatewayProxyEvent {
   return (
     event.requestContext?.authorizer !== null &&

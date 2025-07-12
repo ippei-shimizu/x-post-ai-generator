@@ -37,7 +37,7 @@ function createErrorResponse(
   statusCode: number,
   code: string,
   message: string,
-  headers: Record<string, string> = {}
+  headers: Record<string, string> = {},
 ): APIGatewayProxyResult {
   return {
     statusCode,
@@ -59,7 +59,7 @@ function createErrorResponse(
  * Authorizationヘッダーからトークンを抽出
  */
 function extractTokenFromHeader(
-  headers: APIGatewayProxyEvent["headers"]
+  headers: APIGatewayProxyEvent["headers"],
 ): string | null {
   const authHeader =
     headers.authorization || headers.Authorization || headers.AUTHORIZATION;
@@ -86,23 +86,17 @@ function verifyToken(token: string, secret: string): JWTAuthPayload {
     if (!isValidJWTPayload(payload)) {
       throw new AuthError(
         AuthErrorCode.INVALID_TOKEN,
-        "Invalid token payload structure"
+        "Invalid token payload structure",
       );
     }
 
     return payload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      throw new AuthError(
-        AuthErrorCode.TOKEN_EXPIRED,
-        "Token has expired"
-      );
+      throw new AuthError(AuthErrorCode.TOKEN_EXPIRED, "Token has expired");
     }
     if (error instanceof jwt.JsonWebTokenError) {
-      throw new AuthError(
-        AuthErrorCode.INVALID_TOKEN,
-        "Invalid token"
-      );
+      throw new AuthError(AuthErrorCode.INVALID_TOKEN, "Invalid token");
     }
     throw error;
   }
@@ -116,12 +110,12 @@ function verifyToken(token: string, secret: string): JWTAuthPayload {
  */
 export function authMiddleware(
   handler: APIGatewayProxyHandler,
-  options: AuthMiddlewareOptions = {}
+  options: AuthMiddlewareOptions = {},
 ): APIGatewayProxyHandler {
   return async (
     event: APIGatewayProxyEvent,
     context: Context,
-    callback?: any
+    callback?: any,
   ): Promise<APIGatewayProxyResult> => {
     try {
       // JWT Secret の取得
@@ -130,7 +124,7 @@ export function authMiddleware(
         return createErrorResponse(
           500,
           AuthErrorCode.INTERNAL_SERVER_ERROR,
-          "JWT_SECRET is not configured"
+          "JWT_SECRET is not configured",
         );
       }
 
@@ -140,7 +134,7 @@ export function authMiddleware(
         return createErrorResponse(
           401,
           AuthErrorCode.UNAUTHORIZED,
-          "Authorization header missing or invalid format"
+          "Authorization header missing or invalid format",
         );
       }
 
@@ -172,7 +166,7 @@ export function authMiddleware(
         return createErrorResponse(
           500,
           AuthErrorCode.INTERNAL_SERVER_ERROR,
-          "Handler returned no result"
+          "Handler returned no result",
         );
       }
 
@@ -187,11 +181,7 @@ export function authMiddleware(
     } catch (error) {
       // 認証エラーの処理
       if (error instanceof AuthError) {
-        return createErrorResponse(
-          error.statusCode,
-          error.code,
-          error.message
-        );
+        return createErrorResponse(error.statusCode, error.code, error.message);
       }
 
       // その他のエラー
@@ -199,7 +189,7 @@ export function authMiddleware(
       return createErrorResponse(
         500,
         AuthErrorCode.INTERNAL_SERVER_ERROR,
-        "Internal server error"
+        "Internal server error",
       );
     }
   };
@@ -211,11 +201,9 @@ export function authMiddleware(
  * authMiddlewareで認証された場合、event.requestContext.authorizerから
  * ユーザーIDを取得できます。
  */
-export function extractUserId(
-  event: APIGatewayProxyEvent
-): string | null {
+export function extractUserId(event: APIGatewayProxyEvent): string | null {
   const authorizer = (event.requestContext as any).authorizer;
-  
+
   if (!authorizer || typeof authorizer.userId !== "string") {
     return null;
   }
@@ -227,7 +215,7 @@ export function extractUserId(
  * 型ガード: イベントが認証済みかどうかを判定
  */
 export function isAuthenticated(
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): event is AuthenticatedAPIGatewayProxyEvent {
   return extractUserId(event) !== null;
 }

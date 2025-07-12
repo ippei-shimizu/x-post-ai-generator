@@ -4,11 +4,7 @@
  * 認証ミドルウェアと関連するユーティリティ関数のエクスポート
  */
 
-export {
-  authMiddleware,
-  extractUserId,
-  isAuthenticated,
-} from "./auth";
+export { authMiddleware, extractUserId, isAuthenticated } from "./auth";
 
 export type {
   AuthContext,
