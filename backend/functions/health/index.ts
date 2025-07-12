@@ -64,10 +64,9 @@ export const handler: LambdaHandler = async (
     const openaiStatus = await checkOpenAIAvailability();
 
     // 全体的な健康状態判定
+    // 必須環境変数があれば健康、依存関係はワーニング扱い
     const isHealthy =
-      missingEnvVars.length === 0 &&
-      supabaseStatus === "connected" &&
-      openaiStatus === "available";
+      missingEnvVars.length === 0;
 
     // レスポンスデータ構築
     const healthData: HealthCheckData = {
