@@ -17,7 +17,7 @@ import { HTTP_STATUS_CODES } from "../../src/types/aws";
 const getPersonasHandler: APIGatewayProxyHandler = async (event) => {
   // authMiddlewareにより、この時点で認証済み
   const userId = extractUserId(event);
-  
+
   if (!userId) {
     // これは通常発生しないが、安全のため
     return {
@@ -42,7 +42,7 @@ const getPersonasHandler: APIGatewayProxyHandler = async (event) => {
       description: "技術情報を分かりやすく発信",
     },
     {
-      id: "persona-2", 
+      id: "persona-2",
       user_id: userId,
       name: "エンジニア",
       description: "実装の詳細や技術的洞察を共有",

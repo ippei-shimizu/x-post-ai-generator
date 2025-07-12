@@ -18,22 +18,24 @@ Issue #23で実装された、Lambda関数用のJWT認証ミドルウェアで�
 ## 基本的な使用方法
 
 ```typescript
-import { authMiddleware, extractUserId } from '../src/middleware/auth';
-import type { APIGatewayProxyHandler } from 'aws-lambda';
+import { authMiddleware, extractUserId } from "../src/middleware/auth";
+import type { APIGatewayProxyHandler } from "aws-lambda";
 
 // Lambda関数の実装
 const myLambdaHandler: APIGatewayProxyHandler = async (event) => {
   // この時点で認証済み（authMiddlewareが検証済み）
   const userId = extractUserId(event);
-  
+
   // ユーザー固有の処理を実行
   return {
     statusCode: 200,
     body: JSON.stringify({
       success: true,
       user_id: userId,
-      data: { /* ユーザー固有データ */ }
-    })
+      data: {
+        /* ユーザー固有データ */
+      },
+    }),
   };
 };
 
@@ -44,12 +46,12 @@ export const handler = authMiddleware(myLambdaHandler);
 ## 高度な使用方法
 
 ```typescript
-import { authMiddleware } from '../src/middleware/auth';
+import { authMiddleware } from "../src/middleware/auth";
 
 // カスタムオプション付き
 export const handler = authMiddleware(myLambdaHandler, {
   enableCors: true,
-  corsOrigin: ['http://localhost:3010', 'https://yourdomain.com'],
+  corsOrigin: ["http://localhost:3010", "https://yourdomain.com"],
   enableRateLimit: false, // 将来実装
 });
 ```
@@ -85,10 +87,12 @@ JWT_SECRET=your-jwt-secret-key
 ## 型定義
 
 ```typescript
-import type { AuthenticatedAPIGatewayProxyEvent } from '../src/types/auth';
+import type { AuthenticatedAPIGatewayProxyEvent } from "../src/types/auth";
 
 // 認証済みイベントの型
-const authenticatedHandler = async (event: AuthenticatedAPIGatewayProxyEvent) => {
+const authenticatedHandler = async (
+  event: AuthenticatedAPIGatewayProxyEvent,
+) => {
   // event.requestContext.authorizer.userId が利用可能
   // event.requestContext.authorizer.email が利用可能
 };
