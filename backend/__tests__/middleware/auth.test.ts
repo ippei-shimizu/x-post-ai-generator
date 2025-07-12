@@ -5,7 +5,11 @@
  */
 
 import { authMiddleware } from "../../src/middleware/auth";
-import type { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from "aws-lambda";
+import type {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+} from "aws-lambda";
 import * as jwt from "jsonwebtoken";
 
 // テスト用の設定
@@ -21,7 +25,7 @@ const mockEnv = {
 // テスト用APIGatewayイベント生成
 const createMockEvent = (
   authHeader?: string,
-  overrides?: Partial<APIGatewayProxyEvent>
+  overrides?: Partial<APIGatewayProxyEvent>,
 ): APIGatewayProxyEvent => ({
   httpMethod: "GET",
   path: "/test",
@@ -80,7 +84,7 @@ const createValidJWT = (expiresIn: string = "1h"): string => {
       email: TEST_EMAIL,
     },
     TEST_JWT_SECRET,
-    { expiresIn } as jwt.SignOptions
+    { expiresIn } as jwt.SignOptions,
   );
 };
 
@@ -92,7 +96,7 @@ const createExpiredJWT = (): string => {
       email: TEST_EMAIL,
     },
     TEST_JWT_SECRET,
-    { expiresIn: "-1h" } as jwt.SignOptions // 1時間前に期限切れ
+    { expiresIn: "-1h" } as jwt.SignOptions, // 1時間前に期限切れ
   );
 };
 
@@ -166,7 +170,11 @@ describe("Auth Middleware - TDD", () => {
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       // ハンドラーが呼ばれないことを確認
       expect(mockHandler).not.toHaveBeenCalled();
@@ -186,7 +194,11 @@ describe("Auth Middleware - TDD", () => {
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(mockHandler).not.toHaveBeenCalled();
       expect(result.statusCode).toBe(401);
@@ -203,7 +215,11 @@ describe("Auth Middleware - TDD", () => {
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(mockHandler).not.toHaveBeenCalled();
       expect(result.statusCode).toBe(401);
@@ -216,7 +232,7 @@ describe("Auth Middleware - TDD", () => {
       const wrongSecretToken = jwt.sign(
         { sub: TEST_USER_ID, email: TEST_EMAIL },
         "wrong-secret",
-        { expiresIn: "1h" } as jwt.SignOptions
+        { expiresIn: "1h" } as jwt.SignOptions,
       );
       const event = createMockEvent(`Bearer ${wrongSecretToken}`);
       const context = createMockContext();
@@ -224,7 +240,11 @@ describe("Auth Middleware - TDD", () => {
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(mockHandler).not.toHaveBeenCalled();
       expect(result.statusCode).toBe(401);
@@ -270,7 +290,11 @@ describe("Auth Middleware - TDD", () => {
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(500);
       const body = JSON.parse(result.body);
@@ -282,10 +306,16 @@ describe("Auth Middleware - TDD", () => {
       const event = createMockEvent(`Bearer ${validToken}`);
       const context = createMockContext();
 
-      const mockHandler = jest.fn().mockRejectedValue(new Error("Handler error"));
+      const mockHandler = jest
+        .fn()
+        .mockRejectedValue(new Error("Handler error"));
       const wrappedHandler = authMiddleware(mockHandler);
 
-      const result = await wrappedHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(500);
       const body = JSON.parse(result.body);
@@ -320,11 +350,17 @@ describe("Auth Middleware - TDD", () => {
       });
 
       const wrappedHandler = authMiddleware(mockHandler);
-      const result = await wrappedHandler(event, createMockContext(), () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        createMockContext(),
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.headers).toBeDefined();
       expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("*");
-      expect(result.headers?.["Access-Control-Allow-Headers"]).toContain("Authorization");
+      expect(result.headers?.["Access-Control-Allow-Headers"]).toContain(
+        "Authorization",
+      );
     });
 
     it("should add CORS headers to error responses", async () => {
@@ -332,7 +368,11 @@ describe("Auth Middleware - TDD", () => {
 
       const mockHandler = jest.fn();
       const wrappedHandler = authMiddleware(mockHandler);
-      const result = await wrappedHandler(event, createMockContext(), () => {}) as APIGatewayProxyResult;
+      const result = (await wrappedHandler(
+        event,
+        createMockContext(),
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("*");
     });
@@ -352,9 +392,15 @@ describe("Auth Middleware - TDD", () => {
       await wrappedHandler(event, createMockContext(), () => {});
 
       const modifiedEvent = mockHandler.mock.calls[0][0];
-      expect(modifiedEvent.requestContext.authorizer.requestMetadata).toBeDefined();
-      expect(modifiedEvent.requestContext.authorizer.requestMetadata.ip).toBe("127.0.0.1");
-      expect(modifiedEvent.requestContext.authorizer.requestMetadata.userAgent).toBe("test-user-agent");
+      expect(
+        modifiedEvent.requestContext.authorizer.requestMetadata,
+      ).toBeDefined();
+      expect(modifiedEvent.requestContext.authorizer.requestMetadata.ip).toBe(
+        "127.0.0.1",
+      );
+      expect(
+        modifiedEvent.requestContext.authorizer.requestMetadata.userAgent,
+      ).toBe("test-user-agent");
     });
   });
 

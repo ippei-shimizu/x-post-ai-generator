@@ -5,7 +5,11 @@
  */
 
 import { handler as exampleHandler } from "../../functions/personas/example";
-import type { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from "aws-lambda";
+import type {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+} from "aws-lambda";
 import * as jwt from "jsonwebtoken";
 
 // テスト用の設定
@@ -21,7 +25,7 @@ const mockEnv = {
 // テスト用APIGatewayイベント生成
 const createMockEvent = (
   authHeader?: string,
-  overrides?: Partial<APIGatewayProxyEvent>
+  overrides?: Partial<APIGatewayProxyEvent>,
 ): APIGatewayProxyEvent => ({
   httpMethod: "GET",
   path: "/personas",
@@ -79,7 +83,7 @@ const createValidJWT = (expiresIn: string = "1h"): string => {
       email: TEST_EMAIL,
     },
     TEST_JWT_SECRET,
-    { expiresIn } as jwt.SignOptions
+    { expiresIn } as jwt.SignOptions,
   );
 };
 
@@ -120,11 +124,15 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(`Bearer ${validToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(200);
       const body = JSON.parse(result.body);
-      
+
       expect(body.success).toBe(true);
       expect(body.data.user_id).toBe(TEST_USER_ID);
       expect(body.data.personas).toBeDefined();
@@ -136,11 +144,15 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(); // 認証ヘッダーなし
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(401);
       const body = JSON.parse(result.body);
-      
+
       expect(body.success).toBe(false);
       expect(body.error.code).toBe("UNAUTHORIZED");
     });
@@ -150,11 +162,15 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(`Bearer ${validToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(200);
       const body = JSON.parse(result.body);
-      
+
       // 返されたペルソナがすべて認証されたユーザーのものであることを確認
       body.data.personas.forEach((persona: any) => {
         expect(persona.user_id).toBe(TEST_USER_ID);
@@ -166,11 +182,17 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(`Bearer ${validToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.headers).toBeDefined();
       expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("*");
-      expect(result.headers?.["Access-Control-Allow-Headers"]).toContain("Authorization");
+      expect(result.headers?.["Access-Control-Allow-Headers"]).toContain(
+        "Authorization",
+      );
     });
 
     it("should handle request metadata correctly", async () => {
@@ -179,10 +201,14 @@ describe("Auth Middleware - Integration Tests", () => {
       const context = createMockContext();
 
       // リクエストメタデータが正しく処理されることを間接的に確認
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(200);
-      
+
       // 正常に処理されたということは、メタデータも正しく渡されたことを意味する
       const body = JSON.parse(result.body);
       expect(body.success).toBe(true);
@@ -195,7 +221,11 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(`Bearer ${invalidToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(401);
       const body = JSON.parse(result.body);
@@ -207,12 +237,16 @@ describe("Auth Middleware - Integration Tests", () => {
       const expiredToken = jwt.sign(
         { sub: TEST_USER_ID, email: TEST_EMAIL },
         TEST_JWT_SECRET,
-        { expiresIn: "-1h" } as jwt.SignOptions
+        { expiresIn: "-1h" } as jwt.SignOptions,
       );
       const event = createMockEvent(`Bearer ${expiredToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(401);
       const body = JSON.parse(result.body);
@@ -227,7 +261,11 @@ describe("Auth Middleware - Integration Tests", () => {
       const event = createMockEvent(`Bearer ${validToken}`);
       const context = createMockContext();
 
-      const result = await exampleHandler(event, context, () => {}) as APIGatewayProxyResult;
+      const result = (await exampleHandler(
+        event,
+        context,
+        () => {},
+      )) as APIGatewayProxyResult;
 
       expect(result.statusCode).toBe(500);
       const body = JSON.parse(result.body);
