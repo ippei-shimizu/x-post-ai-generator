@@ -5,26 +5,15 @@ import type { Database } from '@/types/supabase';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Validate environment variables with descriptive errors
-if (!supabaseUrl) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is required');
-}
+// Create a dummy client for build time
+const isDevelopmentOrBuild = process.env.NODE_ENV !== 'production' || !supabaseUrl || !supabaseAnonKey;
 
-if (!supabaseAnonKey) {
-  throw new Error(
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is required'
-  );
-}
-
-// Validate URL format
-try {
-  new URL(supabaseUrl);
-} catch {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL must be a valid URL');
-}
+// Provide default values during build to prevent errors
+const validatedUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const validatedKey = supabaseAnonKey || 'placeholder-anon-key';
 
 // Create Supabase client with optimized configuration
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(validatedUrl, validatedKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
@@ -60,7 +49,7 @@ export const createServerClient = () => {
     throw new Error('Missing Supabase service role key');
   }
 
-  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  return createClient<Database>(validatedUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

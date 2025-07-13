@@ -2,32 +2,38 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase client for auth operations
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+// Lazy initialization of Supabase client to avoid build-time errors
+let supabaseAdmin: ReturnType<typeof createClient> | null = null;
 
-if (!supabaseUrl) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL is required for NextAuth');
+function getSupabaseAdmin() {
+  if (!supabaseAdmin) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      // Return null during build time
+      console.warn(
+        'Supabase environment variables not found. Auth features will be limited.'
+      );
+      return null;
+    }
+
+    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+  return supabaseAdmin;
 }
-
-if (!supabaseServiceKey) {
-  throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for NextAuth');
-}
-
-// Create admin Supabase client for server-side operations
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
 
 export const authOptions: NextAuthOptions = {
   // Authentication providers
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
       authorization: {
         params: {
           // Request additional Google scopes if needed
@@ -58,7 +64,13 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === 'google' && user.email) {
         try {
           // Check if user exists in auth_users table
-          const { data: existingUser, error: checkError } = await supabaseAdmin
+          const client = getSupabaseAdmin();
+          if (!client) {
+            console.error('Supabase client not available during sign in');
+            return false;
+          }
+          
+          const { data: existingUser, error: checkError } = await client
             .from('auth_users')
             .select('id')
             .eq('email', user.email)
@@ -75,7 +87,7 @@ export const authOptions: NextAuthOptions = {
             const userId = crypto.randomUUID();
 
             // Create new user in auth_users table
-            const { error: insertError } = await supabaseAdmin
+            const { error: insertError } = await client
               .from('auth_users')
               .insert({
                 id: userId,
@@ -107,7 +119,13 @@ export const authOptions: NextAuthOptions = {
       // Add user ID to token when user signs in
       if (user && user.email) {
         // Get the UUID from database (not the Google numeric ID)
-        const { data: dbUser } = await supabaseAdmin
+        const client = getSupabaseAdmin();
+        if (!client) {
+          console.error('Supabase client not available during JWT callback');
+          return token;
+        }
+        
+        const { data: dbUser } = await client
           .from('auth_users')
           .select('id')
           .eq('email', user.email)
