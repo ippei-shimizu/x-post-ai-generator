@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
             console.error('Supabase client not available during sign in');
             return false;
           }
-          
+
           const { data: existingUser, error: checkError } = await client
             .from('auth_users')
             .select('id')
@@ -124,14 +124,14 @@ export const authOptions: NextAuthOptions = {
           console.error('Supabase client not available during JWT callback');
           return token;
         }
-        
+
         const { data: dbUser } = await client
           .from('auth_users')
           .select('id')
           .eq('email', user.email)
           .single();
 
-        token.uid = dbUser?.id || user.id;
+        token.uid = dbUser?.id || (user as any).id || '';
         token.email = user.email || '';
         token.name = user.name || '';
         token.picture = user.image || '';
