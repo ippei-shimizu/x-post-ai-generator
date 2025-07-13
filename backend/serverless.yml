@@ -31,13 +31,12 @@ custom:
     format: cjs
     exclude:
       - aws-sdk
-    external:
-      - "@aws-sdk/client-cloudwatch-logs"
-      - "@aws-sdk/client-lambda"
-    packager: pnpm
+    # 外部依存関係を削除してすべてバンドルに含める（CI/CD安定化）
+    # external:
+    #   - "@aws-sdk/client-cloudwatch-logs"
+    #   - "@aws-sdk/client-lambda"
+    packager: npm
     packagePath: package.json
-    installExtraArgs: 
-      - "--no-frozen-lockfile"
 
   # Serverless Offline設定
   serverless-offline:
