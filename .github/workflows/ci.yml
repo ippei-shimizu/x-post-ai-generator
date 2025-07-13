@@ -51,7 +51,7 @@ jobs:
         continue-on-error: false
 
       - name: Run unit tests with coverage
-        run: cd ${{ matrix.workspace }} && pnpm run test -- --coverage --passWithNoTests
+        run: cd ${{ matrix.workspace }} && pnpm run test:ci
         env:
           NODE_ENV: test
 
