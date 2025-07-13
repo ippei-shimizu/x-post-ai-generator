@@ -35,9 +35,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd ${{ matrix.workspace }} && pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: TypeScript type check
         run: cd ${{ matrix.workspace }} && pnpm run typecheck
@@ -96,9 +94,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd backend && pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Setup test environment
         run: |
@@ -150,9 +146,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd frontend && pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build frontend
         run: cd frontend && pnpm run build
@@ -204,9 +198,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd backend && pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Setup security test database
         run: |
@@ -256,9 +248,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd frontend && pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
         run: cd frontend && npx playwright install --with-deps
@@ -306,9 +296,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Install backend dependencies
-        run: |
-          cd backend && pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
