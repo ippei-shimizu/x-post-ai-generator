@@ -283,9 +283,10 @@ jobs:
           name: e2e-test-results
           path: frontend/test-results/
 
-  # デプロイメント（mainブランチのみ）
+  # バックエンドデプロイメント（mainブランチのみ）
+  # フロントエンドはVercel側で自動デプロイ設定
   deploy:
-    name: Deploy to Staging
+    name: Deploy Backend to Staging
     runs-on: ubuntu-latest
     needs: [security-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -305,9 +306,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: |
-          pnpm install --frozen-lockfile
           cd backend && pnpm install --frozen-lockfile
 
       - name: Configure AWS credentials
@@ -325,14 +325,7 @@ jobs:
           STAGE: staging
           AWS_REGION: ap-northeast-1
 
-      - name: Deploy frontend to Vercel staging
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./frontend
-          scope: ${{ secrets.VERCEL_ORG_ID }}
+      # フロントエンドデプロイはVercel側で自動設定されるため、GitHub Actionsでは実行しない
 
   # テスト結果通知
   notify-results:
