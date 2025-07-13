@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   // Secret for JWT encryption in production
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-build',
 
   // Session configuration
   session: {
