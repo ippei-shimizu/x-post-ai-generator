@@ -487,17 +487,19 @@ describe("pgvector + Supabase統合テスト", () => {
       expect(Array.isArray(data)).toBe(true);
 
       if (data) {
-        data.forEach((item: { 
-          content_text: string; 
-          embedding: number[]; 
-          metadata: { test: string } 
-        }) => {
-          expect(item.content_text).toBeTruthy();
-          expect(Array.isArray(item.embedding)).toBe(true);
-          expect(item.embedding).toHaveLength(1536);
-          expect(item.metadata).toBeDefined();
-          expect(item.metadata.test).toBe("supabase_integration");
-        });
+        data.forEach(
+          (item: {
+            content_text: string;
+            embedding: number[];
+            metadata: { test: string };
+          }) => {
+            expect(item.content_text).toBeTruthy();
+            expect(Array.isArray(item.embedding)).toBe(true);
+            expect(item.embedding).toHaveLength(1536);
+            expect(item.metadata).toBeDefined();
+            expect(item.metadata.test).toBe("supabase_integration");
+          },
+        );
       }
     });
   });

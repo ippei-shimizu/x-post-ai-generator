@@ -274,7 +274,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: cd frontend && npx playwright install --with-deps
+        run: cd frontend && pnpm exec playwright install --with-deps
 
       - name: Start services for E2E
         run: |
@@ -286,7 +286,8 @@ jobs:
       - name: Run E2E tests
         run: |
           echo "E2E tests temporarily skipped"
-          echo "TODO: Implement test:e2e script with Playwright"
+          echo "TODO: Implement actual E2E test scenarios"
+          echo "Playwright setup complete, ready for test implementation"
           exit 0
         env:
           NODE_ENV: test
