@@ -335,7 +335,7 @@ jobs:
       - name: Deploy backend to staging
         run: |
           cd backend
-          pnpm run deploy -- --stage staging
+          pnpm run deploy:staging
         env:
           STAGE: staging
           AWS_REGION: ap-northeast-1
