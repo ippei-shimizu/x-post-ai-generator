@@ -46,6 +46,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
+  // Secret for JWT encryption in production
+  secret: process.env.NEXTAUTH_SECRET,
+
   // Session configuration
   session: {
     strategy: 'jwt',
