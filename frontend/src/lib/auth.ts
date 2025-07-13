@@ -28,12 +28,23 @@ function getSupabaseAdmin() {
   return supabaseAdmin;
 }
 
+// Validate required environment variables
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+if (!googleClientId || !googleClientSecret) {
+  console.error('Missing required Google OAuth environment variables:', {
+    GOOGLE_CLIENT_ID: !!googleClientId,
+    GOOGLE_CLIENT_SECRET: !!googleClientSecret,
+  });
+}
+
 export const authOptions: NextAuthOptions = {
   // Authentication providers
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: googleClientId || '',
+      clientSecret: googleClientSecret || '',
       authorization: {
         params: {
           // Request additional Google scopes if needed
