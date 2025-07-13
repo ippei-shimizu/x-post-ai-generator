@@ -36,6 +36,8 @@ custom:
       - "@aws-sdk/client-lambda"
     packager: pnpm
     packagePath: package.json
+    installExtraArgs: 
+      - "--no-frozen-lockfile"
 
   # Serverless Offline設定
   serverless-offline:
