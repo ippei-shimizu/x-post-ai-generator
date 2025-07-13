@@ -38,7 +38,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: TypeScript type check
-        run: cd ${{ matrix.workspace }} && pnpm run typecheck
+        run: |
+          if [ "${{ matrix.workspace }}" = "frontend" ]; then
+            cd ${{ matrix.workspace }} && pnpm run type-check
+          else
+            cd ${{ matrix.workspace }} && pnpm run typecheck
+          fi
         continue-on-error: false
 
       - name: ESLint check
