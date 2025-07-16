@@ -30,11 +30,22 @@ describe("GitHub Collection Integration Tests", () => {
   const cleanupTasks: (() => Promise<void>)[] = [];
 
   beforeAll(async () => {
-    // テスト用Supabase接続（実際のDBまたはTestContainer使用）
-    supabase = createClient(
-      process.env.SUPABASE_URL || "http://localhost:54321",
-      process.env.SUPABASE_SERVICE_ROLE_KEY || "test-service-role-key",
-    );
+    // Supabase接続設定
+    const supabaseUrl = process.env.SUPABASE_URL || "http://localhost:54321";
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
+    
+    supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // 接続テスト
+    try {
+      const { error } = await supabase.from('users').select('count').limit(1);
+      if (error && error.message.includes('fetch failed')) {
+        console.warn('Supabase connection failed, integration tests will be limited');
+      }
+    } catch (connectionError) {
+      console.warn('Supabase connection test failed:', connectionError);
+    }
 
     // テスト用ユーザー作成
     // testUserId = `test-user-${Date.now()}`;
