@@ -5,7 +5,7 @@
  */
 
 import { handler } from "../../../functions/health/index";
-import type { APIGatewayProxyEvent, Context } from "aws-lambda";
+import type { APIGatewayProxyEvent } from "aws-lambda";
 
 // モック環境変数
 const mockEnv = {
@@ -68,21 +68,6 @@ const createMockEvent = (
   ...overrides,
 });
 
-// テスト用Lambdaコンテキスト
-const createMockContext = (): Context => ({
-  callbackWaitsForEmptyEventLoop: false,
-  functionName: "health",
-  functionVersion: "$LATEST",
-  invokedFunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:health",
-  memoryLimitInMB: "512",
-  awsRequestId: "test-request-id",
-  logGroupName: "/aws/lambda/health",
-  logStreamName: "2024/01/01/[$LATEST]test",
-  getRemainingTimeInMillis: () => 30000,
-  done: () => {},
-  fail: () => {},
-  succeed: () => {},
-});
 
 describe("Health Check Function - TDD", () => {
   let originalEnv: typeof process.env;
@@ -111,22 +96,16 @@ describe("Health Check Function - TDD", () => {
       setValidEnvironment();
 
       const event = createMockEvent();
-      const context = createMockContext();
-      const result = await handler(event, context, () => {});
+      const result = await handler(event);
 
-      expect(result?.statusCode).toBe(200);
+      expect(result.statusCode).toBe(200);
     });
 
     it("should return JSON content type", async () => {
       setValidEnvironment();
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.headers?.["Content-Type"]).toBe("application/json");
     });
@@ -135,12 +114,7 @@ describe("Health Check Function - TDD", () => {
       setValidEnvironment();
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("*");
     });
@@ -148,12 +122,7 @@ describe("Health Check Function - TDD", () => {
     it("should return structured health data", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
 
@@ -172,12 +141,7 @@ describe("Health Check Function - TDD", () => {
     it("should include environment information", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       const env = body.data.environment;
@@ -192,12 +156,7 @@ describe("Health Check Function - TDD", () => {
     it("should check dependencies status", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       const deps = body.data.dependencies;
@@ -212,12 +171,7 @@ describe("Health Check Function - TDD", () => {
     it("should include performance metrics", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       const perf = body.data.performance;
@@ -233,12 +187,7 @@ describe("Health Check Function - TDD", () => {
     it("should include request metadata", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       const meta = body.meta;
@@ -257,12 +206,7 @@ describe("Health Check Function - TDD", () => {
       delete process.env.JWT_SECRET;
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.statusCode).toBe(503);
 
@@ -277,12 +221,7 @@ describe("Health Check Function - TDD", () => {
       process.env.SUPABASE_URL = "invalid-url";
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       expect(body.data.dependencies.supabase).toBe("unknown");
@@ -292,12 +231,7 @@ describe("Health Check Function - TDD", () => {
       process.env.OPENAI_API_KEY = "invalid-key";
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       expect(body.data.dependencies.openai).toBe("unavailable");
@@ -310,12 +244,7 @@ describe("Health Check Function - TDD", () => {
       delete process.env.OPENAI_API_KEY;
 
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       // 環境変数がない場合は503が返される
       expect(result.statusCode).toBe(503);
@@ -332,7 +261,7 @@ describe("Health Check Function - TDD", () => {
       setValidEnvironment();
       const startTime = Date.now();
       const event = createMockEvent();
-      await handler(event, createMockContext(), () => {});
+      await handler(event);
       const endTime = Date.now();
 
       const executionTime = endTime - startTime;
@@ -342,12 +271,7 @@ describe("Health Check Function - TDD", () => {
     it("should include execution time in response metadata", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const body = JSON.parse(result.body);
       expect(body.meta.executionTime).toBeGreaterThanOrEqual(0);
@@ -357,12 +281,7 @@ describe("Health Check Function - TDD", () => {
     it("should include execution time in response headers", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.headers?.["X-Execution-Time"]).toMatch(/^\d+ms$/);
     });
@@ -372,12 +291,7 @@ describe("Health Check Function - TDD", () => {
     it("should not expose sensitive environment variables", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       const responseBody = result.body;
 
@@ -390,12 +304,7 @@ describe("Health Check Function - TDD", () => {
     it("should include request ID for tracing", async () => {
       setValidEnvironment();
       const event = createMockEvent();
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.headers?.["X-Request-ID"]).toBe("test-request-id");
     });
@@ -406,12 +315,7 @@ describe("Health Check Function - TDD", () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (event as any).requestContext.requestId;
 
-      const result = (await handler(
-        event,
-        createMockContext(),
-        () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      )) as any;
+      const result = await handler(event);
 
       expect(result.headers?.["X-Request-ID"]).toBe("unknown");
     });

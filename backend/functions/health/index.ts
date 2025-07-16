@@ -5,7 +5,7 @@
  */
 
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import type { StandardAPIResponse, LambdaHandler } from "../../src/types/aws";
+import type { StandardAPIResponse } from "../../src/types/aws";
 import { HTTP_STATUS_CODES } from "../../src/types/aws";
 
 /**
@@ -41,7 +41,7 @@ interface HealthCheckData {
  * - 環境情報と依存関係の状態を返却
  * - パフォーマンス情報を含む
  */
-export const handler: LambdaHandler = async (
+export const handler = async (
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   const startTime = Date.now();
