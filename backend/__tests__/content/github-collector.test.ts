@@ -488,6 +488,7 @@ describe("GitHub API Collection Lambda - TDD Red Phase", () => {
         email: "user@example.com",
         content_sources: [
           {
+            id: "source-rss-1",
             source_type: "rss",
             url: "https://example.com/rss",
             is_active: true,
@@ -500,9 +501,9 @@ describe("GitHub API Collection Lambda - TDD Red Phase", () => {
         getRateLimitStatus: jest
           .fn()
           .mockReturnValue({ remaining: 5000, canMakeRequest: true }),
-      };
+      } as any;
 
-      const mockNormalizer = {};
+      const mockNormalizer = {} as any;
 
       // Import the function for testing
       const { processUserData } = await import(
@@ -513,7 +514,7 @@ describe("GitHub API Collection Lambda - TDD Red Phase", () => {
         userData,
         mockGitHubClient,
         mockNormalizer,
-        mockSupabase,
+        mockSupabase as any,
       );
 
       expect(result).toMatchObject({
