@@ -18,6 +18,7 @@ module.exports = {
     ".serverless/",
     "coverage/",
     ".eslintrc.js",
+    "jest.config.js",
   ],
   rules: {
     "@typescript-eslint/no-unused-vars": "error",

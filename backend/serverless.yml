@@ -67,6 +67,10 @@ provider:
   timeout: 28
   memorySize: 512
 
+  # EventBridge設定
+  eventBridge:
+    useCloudFormation: true
+
   # 環境変数
   environment:
     STAGE: ${self:custom.stage}
@@ -148,6 +152,25 @@ functions:
     environment:
       FUNCTION_NAME: authTest
 
+  # Issue #29: GitHub収集Lambda関数
+  collectGithub:
+    handler: functions/content/collect-user-github.collectUserGitHubData
+    description: Daily GitHub data collection for all users (Issue #29)
+    timeout: 900 # 15分 (Lambda最大)
+    memorySize: 1024 # GitHub API処理とデータ正規化のためメモリ増量
+    events:
+      - schedule:
+          name: github-collection-daily
+          description: "24時間ごとのユーザー別GitHub収集 (Issue #29)"
+          rate: rate(24 hours)
+          timezone: Asia/Tokyo
+          enabled: true
+    environment:
+      FUNCTION_NAME: collectGithub
+      MAX_USERS_PER_EXECUTION: 100
+      GITHUB_RATE_LIMIT_WARNING: 4000 # 5000の80%
+      DATA_EXPIRY_DAYS: 30
+
 # CloudFormation リソース
 resources:
   Resources:
@@ -164,6 +187,28 @@ resources:
       Properties:
         LogGroupName: /aws/apigateway/${self:service}-${self:custom.stage}
         RetentionInDays: ${self:custom.logRetentionInDays.${self:custom.stage}}
+
+    # GitHub収集用IAMロール
+    GitHubCollectionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: InvokeLambdaPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource:
+                    - Fn::GetAtt: [CollectDashgithubLambdaFunction, Arn]
 
   Outputs:
     # API Gateway URL
